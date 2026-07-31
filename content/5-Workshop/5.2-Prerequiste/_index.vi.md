@@ -139,18 +139,61 @@ Chúng ta cần xây dựng cấu trúc mạng chia tầng bảo mật bằng c�
 
 
 #### Bước 4: Thiết lập Bảng định tuyến (Route Tables)
-1. **Public Route Table (Cho Public Subnet):**
-   * Truy cập **Route tables** -> **Create route table**. Name: `shopsflow-public-rt`, VPC: `shopsflow-vpc`.
-   * Tại tab **Routes** -> Chọn **Edit routes** -> Thêm route: Destination `0.0.0.0/0`, Target: **Internet Gateway** (`shopsflow-igw`).
-   * Tại tab **Subnet associations** -> Chọn **Edit subnet associations** -> Tick chọn `shopsflow-public-1` và `shopsflow-public-2`.
-2. **Private Route Table (Cho EC2 Backend Subnet):**
-   * Tạo route table: Name: `shopsflow-private-rt`.
-   * Tại tab **Routes** -> Thêm route: Destination `0.0.0.0/0`, Target: **NAT Gateway** (`shopsflow-nat-gw`).
-   * Liên kết với Subnets: Tick chọn `shopsflow-private-app-1` và `shopsflow-private-app-2`.
-3. **DB Route Table (Cô lập hoàn toàn):**
-   * Tạo route table: Name: `shopsflow-db-rt` (Không cấu hình route ra ngoài).
-   * Liên kết với Subnets: Tick chọn `shopsflow-private-db-1` và `shopsflow-private-db-2`.
 
+##### 4.1. Public Route Table (Dành cho các Public Subnets)
+1. Truy cập **AWS Console** -> **VPC** -> **Route tables** -> Chọn **Create route table**.
+2. Thiết lập:
+   * **Name:** `shopsflow-public-rt`
+   * **VPC:** Chọn `shopsflow-vpc`
+3. Chọn **Create route table**.
+4. Cấu hình định tuyến:
+   * Mở tab **Routes** -> Chọn **Edit routes** -> Chọn **Add route**.
+   * **Destination:** `0.0.0.0/0` | **Target:** Chọn **Internet Gateway** (`shopsflow-igw`)
+   * Chọn **Save changes**.
+5. Gán Subnet:
+   * Mở tab **Subnet associations** -> Chọn **Edit subnet associations**.
+   * Tick chọn `shopsflow-public-1` và `shopsflow-public-2`.
+   * Chọn **Save associations**.
+
+![Kết quả cấu hình Public Route Table](public-rt.jpg)
+
+---
+
+##### 4.2. Private Route Table 1 (Dành cho Private Subnet tại AZ 1)
+1. Chọn **Create route table**.
+2. Thiết lập:
+   * **Name:** `shopsflow-private-rt-1`
+   * **VPC:** Chọn `shopsflow-vpc`
+3. Chọn **Create route table**.
+4. Cấu hình định tuyến:
+   * Mở tab **Routes** -> Chọn **Edit routes** -> Chọn **Add route**.
+   * **Destination:** `0.0.0.0/0` | **Target:** Chọn **NAT Gateway** (`shopsflow-nat-gw-1`)
+   * Chọn **Save changes**.
+5. Gán Subnet:
+   * Mở tab **Subnet associations** -> Chọn **Edit subnet associations**.
+   * Tick chọn `shopsflow-private-1` *(chứa ECS Backend và RDS tại AZ 1)*.
+   * Chọn **Save associations**.
+
+![Kết quả cấu hình Private Route Table 1](private-rt-1.jpg)
+
+---
+
+##### 4.3. Private Route Table 2 (Dành cho Private Subnet tại AZ 2)
+1. Chọn **Create route table**.
+2. Thiết lập:
+   * **Name:** `shopsflow-private-rt-2`
+   * **VPC:** Chọn `shopsflow-vpc`
+3. Chọn **Create route table**.
+4. Cấu hình định tuyến:
+   * Mở tab **Routes** -> Chọn **Edit routes** -> Chọn **Add route**.
+   * **Destination:** `0.0.0.0/0` | **Target:** Chọn **NAT Gateway** (`shopsflow-nat-gw-2`)
+   * Chọn **Save changes**.
+5. Gán Subnet:
+   * Mở tab **Subnet associations** -> Chọn **Edit subnet associations**.
+   * Tick chọn `shopsflow-private-2` *(chứa ECS Backend và RDS tại AZ 2)*.
+   * Chọn **Save associations**.
+
+![Kết quả cấu hình Private Route Table 2](private-rt-2.jpg)
 ---
 
 ### 4. Cấu hình Bảo mật (KMS & Secrets Manager)
