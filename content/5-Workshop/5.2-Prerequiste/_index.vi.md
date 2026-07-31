@@ -1,14 +1,11 @@
 ---
-title: "Thiết lập Mạng, Quyền & Secrets"
+title: "Thiết lập Mạng, Quyền & Bảng định tuyến"
 date: 2026-06-15
 weight: 2
 chapter: false
 pre: " <b> 5.2. </b> "
 ---
 
-Bài viết này hướng dẫn chuẩn bị môi trường mạng riêng ảo **Amazon VPC** theo chuẩn có sẵn (VPC Multi-AZ), cấu hình khóa mã hóa **AWS KMS**, lưu trữ thông tin nhạy cảm trên **AWS Secrets Manager**, cấu hình **Security Groups** và phân quyền **IAM**.
-
----
 
 ### 1. Chuẩn bị (Prerequisites)
 * **Tài khoản AWS:** Có quyền quản trị.
@@ -21,20 +18,6 @@ Bài viết này hướng dẫn chuẩn bị môi trường mạng riêng ảo *
 
 Chúng ta cần xây dựng cấu trúc mạng chia tầng bảo mật bằng cách sử dụng 6 subnets phân bổ trên 2 Availability Zones.
 
-#### Bước 1: Khởi tạo Mạng (VPC & Subnets)
-
-1. Truy cập **AWS Console** -> **VPC** -> Chọn **Create VPC**.
-2. Thiết lập:
-   * **VPC settings:** Chọn **VPC and more** (tự động tạo Subnet và Routing).
-   * **Name tag auto-generation:** `shopsflow-vpc`
-   * **IPv4 CIDR block:** `10.0.0.0/16`
-   * **Number of Availability Zones (AZs):** `2`
-   * **Number of Public subnets:** `2`
-   * **Number of Private subnets:** `2`
-   * **NAT gateways:** Chọn **In 1 AZ** (hoặc **1 per AZ** nếu cần tính sẵn sàng cao).
-3. Chọn **Create VPC**.
-
-![Kết quả tạo VPC](vpc.jpg)
 #### Bước 1: Khởi tạo Mạng (VPC & Subnets)
 
 ##### 1.1. Khởi tạo VPC
@@ -63,10 +46,10 @@ Chúng ta cần xây dựng cấu trúc mạng chia tầng bảo mật bằng c�
    * **Subnet 4 (Private AZ 2):** Name: `shopsflow-private-2` | AZ: `ap-southeast-1b` | CIDR: `10.0.4.0/24`
 4. Chọn **Create subnets**.
 5. Sau khi tạo xong, tick chọn 2 Public Subnets (`shopsflow-public-1`, `shopsflow-public-2`) -> Chọn **Actions** -> **Edit subnet settings** -> Tick chọn **Enable auto-assign public IPv4 address** để các tài nguyên khởi tạo trong này tự động nhận IP Public.
-![Tạo Public Subnet 1](/images/5-Workshop/5.2-Prerequisite/public_subnet1.jpg)
-![Tạo Public Subnet 2](/images/5-Workshop/5.2-Prerequisite/public_subnet2.jpg)
-![Tạo Private Subnet 1](/images/5-Workshop/5.2-Prerequisite/private_subnet1.jpg)
-![Tạo Private Subnet 2](/images/5-Workshop/5.2-Prerequisite/private_subnet2.jpg)
+![Tạo Public Subnet 1](/images/5-Workshop/5.2-Prerequisite/public_subnet_1.jpg)
+![Tạo Public Subnet 2](/images/5-Workshop/5.2-Prerequisite/public_subnet_2.jpg)
+![Tạo Private Subnet 1](/images/5-Workshop/5.2-Prerequisite/private_subnet_1.jpg)
+![Tạo Private Subnet 2](/images/5-Workshop/5.2-Prerequisite/private_subnet_2.jpg)
 
 
 ---
@@ -84,7 +67,6 @@ Chúng ta cần xây dựng cấu trúc mạng chia tầng bảo mật bằng c�
 4. Chọn **Create security group**.
 
 ![Kết quả tạo ALB Security Group](/images/5-Workshop/5.2-Prerequisite/alb-sg.jpg)
-![Cấu hình ALB](/images/5-Workshop/5.2-Prerequisite/alb.jpg)
 
 ##### 2.2. Tạo Security Group cho ECS (ecs-sg)
 1. Chọn **Create security group**.

@@ -1,14 +1,11 @@
 ---
-title: "Network, Permissions & Secrets Setup"
+title: "Network, Permissions & Router Setup"
 date: 2026-06-15
 weight: 2
 chapter: false
 pre: " <b> 5.2. </b> "
 ---
 
-This article guides you through preparing a standard virtual private network environment (**Amazon VPC**) (VPC Multi-AZ), configuring encryption keys (**AWS KMS**), storing sensitive information in **AWS Secrets Manager**, configuring **Security Groups**, and assigning **IAM** permissions.
-
----
 
 ### 1. Prerequisites
 * **AWS Account:** Administrator privileges.
@@ -20,21 +17,6 @@ This article guides you through preparing a standard virtual private network env
 ### 2. Network Setup (Amazon VPC Multi-AZ)
 
 We need to build a secure tiered network structure using 6 subnets distributed across 2 Availability Zones.
-
-#### Step 1: Network Initialization (VPC & Subnets)
-
-1. Access **AWS Console** -> **VPC** -> Select **Create VPC**.
-2. Settings:
-   * **VPC settings:** Select **VPC and more** (automatically creates Subnets and Routing).
-   * **Name tag auto-generation:** `shopsflow-vpc`
-   * **IPv4 CIDR block:** `10.0.0.0/16`
-   * **Number of Availability Zones (AZs):** `2`
-   * **Number of Public subnets:** `2`
-   * **Number of Private subnets:** `2`
-   * **NAT gateways:** Select **In 1 AZ** (or **1 per AZ** for high availability).
-3. Select **Create VPC**.
-
-![VPC Creation Result](vpc.jpg)
 
 #### Step 1: Network Initialization (VPC & Subnets)
 
@@ -65,10 +47,10 @@ We need to build a secure tiered network structure using 6 subnets distributed a
 4. Select **Create subnets**.
 5. After creation, check the 2 Public Subnets (`shopsflow-public-1`, `shopsflow-public-2`) -> Select **Actions** -> **Edit subnet settings** -> Check **Enable auto-assign public IPv4 address** so that resources launched in these subnets automatically receive a Public IP.
 
-![Create Public Subnet 1](/images/5-Workshop/5.2-Prerequisite/public_subnet1.jpg)
-![Create Public Subnet 2](/images/5-Workshop/5.2-Prerequisite/public_subnet2.jpg)
-![Create Private Subnet 1](/images/5-Workshop/5.2-Prerequisite/private_subnet1.jpg)
-![Create Private Subnet 2](/images/5-Workshop/5.2-Prerequisite/private_subnet2.jpg)
+![Create Public Subnet 1](/images/5-Workshop/5.2-Prerequisite/public_subnet_1.jpg)
+![Create Public Subnet 2](/images/5-Workshop/5.2-Prerequisite/public_subnet_2.jpg)
+![Create Private Subnet 1](/images/5-Workshop/5.2-Prerequisite/private_subnet_1.jpg)
+![Create Private Subnet 2](/images/5-Workshop/5.2-Prerequisite/private_subnet_2.jpg)
 
 ---
 
@@ -85,7 +67,7 @@ We need to build a secure tiered network structure using 6 subnets distributed a
 4. Select **Create security group**.
 
 ![ALB Security Group Creation Result](/images/5-Workshop/5.2-Prerequisite/alb-sg.jpg)
-![ALB Configuration](/images/5-Workshop/5.2-Prerequisite/alb.jpg)
+
 
 ##### 2.2. Create Security Group for ECS (ecs-sg)
 1. Select **Create security group**.
