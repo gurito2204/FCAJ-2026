@@ -73,4 +73,4 @@ Giải quyết bài toán thực tiễn.
 * **Kỹ năng thi Hackathon & Pitching:**
     * Không cần hệ thống phải hoàn thiện 100%, nhưng demo phải phản ánh đúng điểm đau - pain point và quy trình MVP.
     * Chuẩn bị kỹ cho phần Q&A vì sự quan tâm và câu hỏi đào sâu từ Ban giám khảo chứng tỏ ý tưởng đã gây ấn tượng thành công.
-![Chụp cùng anh Nguyễn Công Minh](/images/event.jpg)
+![Chụp cùng anh Nguyễn Công Minh](/images/event2.jpg)

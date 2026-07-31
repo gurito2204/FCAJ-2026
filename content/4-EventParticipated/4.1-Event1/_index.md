@@ -75,4 +75,4 @@ pre: " <b> 4.1. </b> "
     * The system does not need to be 100% complete, but the demo must accurately reflect the pain point and MVP workflow.
     * Prepare thoroughly for Q&A, as deep-dive questions from judges indicate that the idea successfully made an impression.
 
-![Photo with Mr. Nguyen Cong Minh](/images/event.jpg)
+![Photo with Mr. Nguyen Cong Minh](/images/event2.jpg)
