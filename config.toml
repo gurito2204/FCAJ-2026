@@ -1,7 +1,7 @@
 baseURL = "https://gurito2204.github.io/FCAJ-2026/"
 relativeURLs = false
 canonifyURLs = true
-defaultContentLanguage = "en"
+defaultContentLanguage = "vi"
 
 # Change the default theme to be use when building the site with Hugo
 theme = "hugo-theme-learn"
@@ -23,33 +23,10 @@ home = [ "HTML", "RSS", "JSON"]
   disableNextPrev = false
   
 [Languages]
-[Languages.en]
-title = "Internship Report"
-weight = 1
-languageName = "English"
-
-[[Languages.en.menu.shortcuts]]
-name = "<i class='fab fa-github'></i> GitHub Repo"
-identifier = "GitHub Repo"
-url = "https://github.com/gurito2204/FCAJ-2026"
-weight = 10
-
-[[Languages.en.menu.shortcuts]]
-name = "<i class='fab fa-aws'></i> AWS Study Group - Blog"
-identifier = "AWS Study Group"
-url = "https://awsstudygroup.com"
-weight = 20
-
-[[Languages.en.menu.shortcuts]]
-name = "<i class='fab fa-facebook'></i> AWS Study Group - FB Group"
-identifier = "AWS Study Group FB"
-url = "https://www.facebook.com/groups/awsstudygroupfcj"
-weight = 20
-
 [Languages.vi]
 title = "Báo cáo thực tập"
-weight = 2
-languageName = "Tiếng Việt"
+weight = 1
+label = "Tiếng Việt"
 
 [[Languages.vi.menu.shortcuts]]
 name = "<i class='fab fa-github'></i> Kho lưu trữ GitHub"
@@ -65,6 +42,29 @@ weight = 20
 
 [[Languages.vi.menu.shortcuts]]
 name = "<i class='fab fa-facebook'></i> AWS Study Group - Nhóm FB"
+identifier = "AWS Study Group FB"
+url = "https://www.facebook.com/groups/awsstudygroupfcj"
+weight = 20
+
+[Languages.en]
+title = "Internship Report"
+weight = 2
+label = "English"
+
+[[Languages.en.menu.shortcuts]]
+name = "<i class='fab fa-github'></i> GitHub Repo"
+identifier = "GitHub Repo"
+url = "https://github.com/gurito2204/FCAJ-2026"
+weight = 10
+
+[[Languages.en.menu.shortcuts]]
+name = "<i class='fab fa-aws'></i> AWS Study Group - Blog"
+identifier = "AWS Study Group"
+url = "https://awsstudygroup.com"
+weight = 20
+
+[[Languages.en.menu.shortcuts]]
+name = "<i class='fab fa-facebook'></i> AWS Study Group - FB Group"
 identifier = "AWS Study Group FB"
 url = "https://www.facebook.com/groups/awsstudygroupfcj"
 weight = 20
