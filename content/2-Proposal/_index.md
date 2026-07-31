@@ -1,115 +1,82 @@
 ---
-title: "Proposal"
-date: 2024-01-01
+title: "Project Proposal"
+date: 2026-06-15
 weight: 2
 chapter: false
 pre: " <b> 2. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-In this section, you need to summarize the contents of the workshop that you **plan** to conduct.
-
-# IoT Weather Platform for Lab Research
-## A Unified AWS Serverless Solution for Real-Time Weather Monitoring
+# Nabathico - Unveiling Destiny via Hybrid Astrology
+Minimalist AWS Serverless Solution for a Cross-Cultural Astrological Application
 
 ### 1. Executive Summary
-The IoT Weather Platform is designed for the ITea Lab team in Ho Chi Minh City to enhance weather data collection and analysis. It supports up to 5 weather stations, with potential scalability to 10-15, utilizing Raspberry Pi edge devices with ESP32 sensors to transmit data via MQTT. The platform leverages AWS Serverless services to deliver real-time monitoring, predictive analytics, and cost efficiency, with access restricted to 5 lab members via Amazon Cognito.
+Nabathico is a divination application that combines Eastern philosophical systems (Zi Wei Dou Shu / Tu Vi) and Western systems (Astrological Natal Charts) to provide comprehensive, multi-dimensional interpretations. The platform enables users to quickly look up information through a smooth mobile/web interface. The project maximizes the use of basic AWS Serverless services, combined with AI, to deliver personalized analytical readings with extremely low maintenance costs, easily scalable from a personal project to thousands of active users.
 
 ### 2. Problem Statement
-### What’s the Problem?
-Current weather stations require manual data collection, becoming unmanageable with multiple units. There is no centralized system for real-time data or analytics, and third-party platforms are costly and overly complex.
+**Current Problem**
+The current market is fragmented: users have to install separate applications for Eastern Tu Vi and Western Astrology. Manually comparing and synthesizing information between the two theoretical systems (e.g., conflicts between the Ascendant in Tu Vi and the Sun Sign) is extremely complicated for average users. Current chart calculation systems are often disconnected and hard to maintain.
 
-### The Solution
-The platform uses AWS IoT Core to ingest MQTT data, AWS Lambda and API Gateway for processing, Amazon S3 for storage (including a data lake), and AWS Glue Crawlers and ETL jobs to extract, transform, and load data from the S3 data lake to another S3 bucket for analysis. AWS Amplify with Next.js provides the web interface, and Amazon Cognito ensures secure access. Similar to Thingsboard and CoreIoT, users can register new devices and manage connections, though this platform operates on a smaller scale and is designed for private use. Key features include real-time dashboards, trend analysis, and low operational costs.
+**The Solution**
+The platform utilizes a minimalist architecture: the user application communicates with Amazon API Gateway, triggering AWS Lambda to run core algorithms in Python (using the `lasotuvi` and `pyswisseph` libraries). User data is simply stored on Amazon DynamoDB. After generating the charts, the system calls an LLM API (such as OpenAI) to synthesize and output the interpretation. Amazon Cognito is used for secure login management. Key features include: instant dual-chart generation, East-West correlation analysis via AI, and birth profile storage.
 
-### Benefits and Return on Investment
-The solution establishes a foundational resource for lab members to develop a larger IoT platform, serving as a study resource, and provides a data foundation for AI enthusiasts for model training or analysis. It reduces manual reporting for each station via a centralized platform, simplifying management and maintenance, and improves data reliability. Monthly costs are $0.66 USD per the AWS Pricing Calculator, with a 12-month total of $7.92 USD. All IoT equipment costs are covered by the existing weather station setup, eliminating additional development expenses. The break-even period of 6-12 months is achieved through significant time savings from reduced manual work.
+**Benefits and Return on Investment (ROI)**
+The solution creates a unique niche tech product with the potential to attract a large Gen Z user base. The Serverless architecture eliminates fixed server costs (pay-as-you-go). Development time is drastically reduced as there is no need to design complex infrastructure. The app can generate revenue through a Freemium model (free basic charts, paid in-depth AI interpretations).
 
-### 3. Solution Architecture
-The platform employs a serverless AWS architecture to manage data from 5 Raspberry Pi-based stations, scalable to 15. Data is ingested via AWS IoT Core, stored in an S3 data lake, and processed by AWS Glue Crawlers and ETL jobs to transform and load it into another S3 bucket for analysis. Lambda and API Gateway handle additional processing, while Amplify with Next.js hosts the dashboard, secured by Cognito. The architecture is detailed below:
+### 3. Solution Architecture (Minimalist)
+The platform applies a single-flow AWS Serverless architecture to process calculation requests from user devices. Requests are sent via API, computed directly in Lambda's RAM, and results are returned instantly without complex intermediary steps.
 
-![IoT Weather Station Architecture](/images/2-Proposal/edge_architecture.jpeg)
+**AWS Services Used**
+*   **Amazon API Gateway:** Receives requests (birth date and time data) from the mobile/web app.
+*   **AWS Lambda:** Handles all core logic (calculating planetary positions, arranging Tu Vi stars, calling AI API).
+*   **Amazon DynamoDB:** Ultra-fast NoSQL storage for user profiles and generated chart history.
+*   **AWS Amplify:** Hosting and continuous deployment for the Frontend interface.
+*   **Amazon Cognito:** Manages user registration/login.
 
-![IoT Weather Platform Architecture](/images/2-Proposal/platform_architecture.jpeg)
-
-### AWS Services Used
-- **AWS IoT Core**: Ingests MQTT data from 5 stations, scalable to 15.
-- **AWS Lambda**: Processes data and triggers Glue jobs (two functions).
-- **Amazon API Gateway**: Facilitates web app communication.
-- **Amazon S3**: Stores raw data in a data lake and processed outputs (two buckets).
-- **AWS Glue**: Crawlers catalog data, and ETL jobs transform and load it.
-- **AWS Amplify**: Hosts the Next.js web interface.
-- **Amazon Cognito**: Secures access for lab users.
-
-### Component Design
-- **Edge Devices**: Raspberry Pi collects and filters sensor data, sending it to IoT Core.
-- **Data Ingestion**: AWS IoT Core receives MQTT messages from the edge devices.
-- **Data Storage**: Raw data is stored in an S3 data lake; processed data is stored in another S3 bucket.
-- **Data Processing**: AWS Glue Crawlers catalog the data, and ETL jobs transform it for analysis.
-- **Web Interface**: AWS Amplify hosts a Next.js app for real-time dashboards and analytics.
-- **User Management**: Amazon Cognito manages user access, allowing up to 5 active accounts.
+**Component Design**
+*   **Frontend (Interface):** The application (React Native or Next.js) is designed for UI/UX on Figma before coding, sending birth data to the system.
+*   **Core Engine (Backend):** Python scripts processing astronomical ephemeris libraries.
+*   **AI Synthesizer:** The module communicating with the LLM API to "translate" technical parameters (e.g., aspects, ruling stars) into easy-to-understand text.
 
 ### 4. Technical Implementation
 **Implementation Phases**
-This project has two parts—setting up weather edge stations and building the weather platform—each following 4 phases:
-- Build Theory and Draw Architecture: Research Raspberry Pi setup with ESP32 sensors and design the AWS serverless architecture (1 month pre-internship)
-- Calculate Price and Check Practicality: Use AWS Pricing Calculator to estimate costs and adjust if needed (Month 1).
-- Fix Architecture for Cost or Solution Fit: Tweak the design (e.g., optimize Lambda with Next.js) to stay cost-effective and usable (Month 2).
-- Develop, Test, and Deploy: Code the Raspberry Pi setup, AWS services with CDK/SDK, and Next.js app, then test and release to production (Months 2-3).
+The project is divided into 4 streamlined phases:
+1.  **Research & Design:** Sketch UI/UX on Figma, test open-source calculation libraries.
+2.  **Core Engine Development (Backend):** Package `pyswisseph` and `lasotuvi` libraries into AWS Lambda.
+3.  **AI & Database Integration:** Build Prompt Engineering for AI to comprehend chart data; connect DynamoDB.
+4.  **Testing & Launch:** Code the Frontend, connect APIs, test Timezone accuracy, and publish to app stores.
 
 **Technical Requirements**
-- Weather Edge Station: Sensors (temperature, humidity, rainfall, wind speed), a microcontroller (ESP32), and a Raspberry Pi as the edge device. Raspberry Pi runs Raspbian, handles Docker for filtering, and sends 1 MB/day per station via MQTT over Wi-Fi.
-- Weather Platform: Practical knowledge of AWS Amplify (hosting Next.js), Lambda (minimal use due to Next.js), AWS Glue (ETL), S3 (two buckets), IoT Core (gateway and rules), and Cognito (5 users). Use AWS CDK/SDK to code interactions (e.g., IoT Core rules to S3). Next.js reduces Lambda workload for the fullstack web app.
+*   **Backend:** Processing logic written in Python. When running tests and configuring the local environment on Windows, use the `python` command (instead of `python3`) to execute calculation scripts to avoid terminal errors.
+*   **Libraries:** `pyswisseph` (Western Natal Chart) and lunisolar calendar conversion algorithms (Zi Wei Dou Shu).
+*   **Database:** Flexible JSON structure on DynamoDB to store complex data arrays of the 12 zodiac signs and 12 Tu Vi palaces.
 
-### 5. Timeline & Milestones
-**Project Timeline**
-- Pre-Internship (Month 0): 1 month for planning and old station review.
-- Internship (Months 1-3): 3 months.
-    - Month 1: Study AWS and upgrade hardware.
-    - Month 2: Design and adjust architecture.
-    - Month 3: Implement, test, and launch.
-- Post-Launch: Up to 1 year for research.
+### 5. Roadmap & Milestones
+*   **Month 0:** Design user flows, draw wireframes, test the accuracy of calculation libraries.
+*   **Month 1 (Core System):** Set up AWS (Cognito, DynamoDB, API Gateway). Write Lambda functions to process datetime and coordinate conversions.
+*   **Month 2 (AI & Experience):** Design Prompt structure, integrate OpenAI API. Start coding the frontend UI.
+*   **Month 3 (Finalization):** Connect Frontend with Backend, test data security, patch display bugs, and launch version 1.0.
 
-### 6. Budget Estimation
-You can find the budget estimation on the [AWS Pricing Calculator](https://calculator.aws/#/estimate?id=621f38b12a1ef026842ba2ddfe46ff936ed4ab01).  
-Or you can download the [Budget Estimation File](../attachments/budget_estimation.pdf).
-
-### Infrastructure Costs
-- AWS Services:
-    - AWS Lambda: $0.00/month (1,000 requests, 512 MB storage).
-    - S3 Standard: $0.15/month (6 GB, 2,100 requests, 1 GB scanned).
-    - Data Transfer: $0.02/month (1 GB inbound, 1 GB outbound).
-    - AWS Amplify: $0.35/month (256 MB, 500 ms requests).
-    - Amazon API Gateway: $0.01/month (2,000 requests).
-    - AWS Glue ETL Jobs: $0.02/month (2 DPUs).
-    - AWS Glue Crawlers: $0.07/month (1 crawler).
-    - MQTT (IoT Core): $0.08/month (5 devices, 45,000 messages).
-
-Total: $0.7/month, $8.40/12 months
-
-- Hardware: $265 one-time (Raspberry Pi 5 and sensors).
+### 6. Budget Estimation (MVP)
+Costs are highly optimized by leveraging the AWS Free Tier for the initial phase.
+**Infrastructure Costs (Estimated monthly for ~1,000 active users):**
+*   **AWS Lambda:** $0.00 (within the 1 million free requests limit).
+*   **Amazon DynamoDB:** $0.00 (within the 25 GB free storage limit).
+*   **Amazon API Gateway:** ~$0.01.
+*   **AWS Amplify:** ~$0.35 (frontend hosting and bandwidth).
+*   **LLM API (OpenAI/Claude):** ~$5.00 - $10.00 (pay-as-you-go based on actual tokens generated from chart interpretations).
+*   **Total AWS/Cloud Cost:** < $1.00/month. Total operational cost (including AI): ~$6-11/month.
 
 ### 7. Risk Assessment
-#### Risk Matrix
-- Network Outages: Medium impact, medium probability.
-- Sensor Failures: High impact, low probability.
-- Cost Overruns: Medium impact, low probability.
+**Risk Matrix**
+*   **Timezone Inaccuracy:** High impact, medium probability (birth time is the most vital element of a chart).
+*   **AI API Latency (Timeout):** Medium impact, high probability (LLMs sometimes take 10-15s to respond).
+*   **Exceeding AI Token Budget:** Medium impact, low probability (in case of spam request abuse).
 
-#### Mitigation Strategies
-- Network: Local storage on Raspberry Pi with Docker.
-- Sensors: Regular checks and spares.
-- Cost: AWS budget alerts and optimization.
-
-#### Contingency Plans
-- Revert to manual methods if AWS fails.
-- Use CloudFormation for cost-related rollbacks.
+**Mitigation Strategies**
+*   **Timezone:** Use international standard timezone database libraries (TZ database) combined with Geo-coding from Google Maps to extract absolute accurate coordinates and timezones.
+*   **Latency:** Design the UI to display a "Divining..." or "Connecting the stars..." animation to retain users while Lambda waits for the AI response.
+*   **Cost:** Set request quotas on API Gateway and establish AWS Billing Alarms.
 
 ### 8. Expected Outcomes
-#### Technical Improvements: 
-Real-time data and analytics replace manual processes.  
-Scalable to 10-15 stations.
-#### Long-term Value
-1-year data foundation for AI research.  
-Reusable for future projects.
+*   **Technical Improvements:** Fully automate star assignments, chart plotting, and information synthesis, replacing manual cross-referencing between separate books or platforms.
+*   **Long-term Value:** Build a core Engine for East-West occultism, which can be packaged and sold as a SaaS API for third parties, or expanded to include Tarot and Bazi (Four Pillars of Destiny) in the future.
