@@ -1,4 +1,4 @@
-baseURL = "https://workshop-sample.awsfcaj.com/"
+baseURL = "https://gurito2204.github.io/FCAJ-2026/"
 relativeURLs = false
 canonifyURLs = false
 defaultContentLanguage = "en"
@@ -13,10 +13,11 @@ home = [ "HTML", "RSS", "JSON"]
 [params]
   # Change default color scheme with a variant one. Can be "red", "blue", "green".
   themeVariant = "workshop"
-  # Git hub repo link
-  editURL = ""
+  # GitHub repository link
+  repoURL = "https://github.com/gurito2204/FCAJ-2026"
+  editURL = "https://github.com/gurito2204/FCAJ-2026/edit/main/content/"
   description = ""
-  author = "thienlh@thienlu.com"
+  author = "gurito2204"
   showVisitedLinks = true
   disableBreadcrumb = false
   disableNextPrev = false
@@ -26,6 +27,12 @@ home = [ "HTML", "RSS", "JSON"]
 title = "Internship Report"
 weight = 1
 languageName = "English"
+
+[[Languages.en.menu.shortcuts]]
+name = "<i class='fab fa-github'></i> GitHub Repo"
+identifier = "GitHub Repo"
+url = "https://github.com/gurito2204/FCAJ-2026"
+weight = 10
 
 [[Languages.en.menu.shortcuts]]
 name = "<i class='fab fa-aws'></i> AWS Study Group - Blog"
@@ -43,6 +50,12 @@ weight = 20
 title = "Báo cáo thực tập"
 weight = 2
 languageName = "Tiếng Việt"
+
+[[Languages.vi.menu.shortcuts]]
+name = "<i class='fab fa-github'></i> Kho lưu trữ GitHub"
+identifier = "GitHub Repo"
+url = "https://github.com/gurito2204/FCAJ-2026"
+weight = 10
 
 [[Languages.vi.menu.shortcuts]]
 name = "<i class='fab fa-aws'></i> AWS Study Group - Blog"
