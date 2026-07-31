@@ -6,17 +6,13 @@ chapter: false
 pre: " <b> 3. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
+Here is the list of technical knowledge-sharing articles (Blog Posts) published in the [AWS Study Group](https://www.facebook.com/groups/awsstudygroupfcj) community:
 
-This section will list and introduce the blogs you have posted to [AWS Study Group](https://www.facebook.com/groups/awsstudygroupfcj). For example:
+###  [Blog 1 - 3 AWS NICHE GOTCHAS NOBODY TELLS YOU ABOUT, BUT WILL BREAK YOUR APP](3.1-Blog1/)
+An article sharing 3 subtle AWS technical gotchas (Incomplete S3 Multipart Uploads billing, IMDSv2 Hop Limit configuration under Docker bridge network, and AWS Lambda /tmp directory caching across warm starts) that can cause unexpected costs and silent errors.
 
-###  [Blog 1 - SESSION POLICIES IN AMAZON EKS POD IDENTITY](3.1-Blog1/)
-This blog introduces the newly added session policies feature in Amazon EKS Pod Identity, which allows you to narrow IAM permissions flexibly and precisely for each pod without needing to create multiple separate IAM roles. This is an important step forward that helps apply the principle of least privilege more effectively in large-scale Kubernetes environments.
+###  [Blog 2 - HIDDEN TRAPS IN AWS THAT OFFICIAL DOCS RARELY WARN YOU ABOUT](3.2-Blog2/)
+A summary of 4 operational and billing lessons learned from AWS deployments (NAT Gateway S3 data charges, Glacier small files transition overheads, iam:PassRole privilege escalation loopholes, and the EBS Volume 6-hour modification lock).
 
-###  [Blog 2 - ...](3.2-Blog2/)
-This blog introduces the newly added session policies feature in Amazon EKS Pod Identity, which allows you to narrow IAM permissions flexibly and precisely for each pod without needing to create multiple separate IAM roles. This is an important step forward that helps apply the principle of least privilege more effectively in large-scale Kubernetes environments.
-
-###  [Blog 3 - ...](3.3-Blog3/)
-This blog introduces the newly added session policies feature in Amazon EKS Pod Identity, which allows you to narrow IAM permissions flexibly and precisely for each pod without needing to create multiple separate IAM roles. This is an important step forward that helps apply the principle of least privilege more effectively in large-scale Kubernetes environments.
+###  [Blog 3 - AWS UNDER-THE-HOOD MECHANICS: FROM HIDDEN CHARGES TO INVISIBLE NETWORK FAILURES](3.3-Blog3/)
+An advanced analysis of 4 under-the-hood AWS mechanics (Cross-Availability Zone data transfer rates, Path MTU Discovery Black Hole issues on VPN/Peering links, the double-scaling peak constraint of DynamoDB On-Demand, and CloudWatch Logs Insights raw scan charges).

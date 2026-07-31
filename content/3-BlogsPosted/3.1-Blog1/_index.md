@@ -1,31 +1,49 @@
 ---
 title: "Blog 1"
-date: 2024-01-01
+date: 2026-06-15
 weight: 1
 chapter: false
 pre: " <b> 3.1. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-# SESSION POLICIES IN AMAZON EKS POD IDENTITY
+# 3 AWS NICHE GOTCHAS NOBODY TELLS YOU ABOUT, BUT WILL BREAK YOUR APP
 
-Amazon EKS Pod Identity has recently added the session policies feature, allowing you to narrow IAM permissions flexibly and precisely for each pod without needing to create many separate IAM roles. This is an important step forward that helps apply the principle of least privilege more effectively in large-scale Kubernetes environments.
+Instead of talking about macro concepts, this post compiles 3 very minor technical details on AWS. They rarely appear on lecture slides but can cause unwarranted costs or cost you days of debugging.
 
-Key points to know:
+---
 
-* A session policy is an inline IAM policy specified when creating or updating a Pod Identity association.
-* Effective permissions = intersection between the IAM role permissions and the session policy → the session policy can only narrow permissions, not expand them.
-* Helps avoid over-permissioning when reusing a single IAM role for multiple workloads with different needs.
-* Supports both same-account and cross-account (via IAM role chaining).
-* Significantly reduces the number of IAM roles that need to be managed, helping avoid hitting IAM quota limits in large clusters.
-* Easily configured through the AWS Management Console, AWS CLI, or AWS SDK when creating an association between a Kubernetes ServiceAccount and an IAM role.
+### 1. "Invisible" Files on S3: Money Spent, But Files Not Found (Incomplete Multipart Uploads)
 
-This feature is especially useful when you have many applications running on the same IAM role but need different permission restrictions (for example: one pod only reads a specific S3 bucket, another pod only calls certain APIs).
+When an application uploads a large file to S3 and the network drops mid-transit, the process is aborted.
 
-...Image...
+*   **The Hidden Truth:** The chunk of data transmitted before the connection dropped remains on S3 storage, and AWS silently bills you monthly for this partial data.
+*   **The Gotcha:** You cannot see these data fragments in the S3 Console or through standard `aws s3 ls` CLI commands. If you have thousands of failed large uploads, this hidden cost penalty can be significant.
+*   **The Solution:** Always configure an **S3 Lifecycle Rule** and check *Delete incomplete multipart uploads* after 1 to 2 days to automatically clean up these hidden fragments.
 
-...Link...
+---
 
-...Guide...
+### 2. The IMDSv2 Hop Limit Trap when Running Applications inside Containers
+
+Upgrading from IMDSv1 to IMDSv2 is a mandatory security best practice to prevent IAM Role credentials leaks on EC2. However, if your application runs inside a Docker container on that EC2 instance, it will immediately lose access to the AWS SDK.
+
+*   **The Hidden Cause:** IMDSv2 utilizes the IP packet TTL (Time to Live) index to block Session Hijacking. By default, AWS sets `PutResponseHopLimit = 1`.
+*   **The Issue:** Requests traveling from inside the container pass through the Docker virtual bridge network interface (`veth bridge`) to reach the metadata IP (`169.254.169.254`), which counts as 2 hops. The packet is dropped immediately because it exceeds the Hop Limit of 1.
+*   **The Solution:** Increase the **Metadata Response Hop Limit** of the EC2 instance from 1 to 2.
+
+---
+
+### 3. AWS Lambda's /tmp Directory is Not as Clean as You Think
+
+Many developers assume that every time a Lambda function is invoked, it runs in a completely isolated and clean environment.
+
+*   **The Hidden Truth:** Due to the **Warm Start** execution model, AWS reuses execution containers for subsequent calls to optimize invocation speed. This means files written to the `/tmp` directory during a previous request will remain there for the next request.
+*   **The Consequences:**
+    *   *Security Risk:* If you temporarily write files containing personal information for User A and forget to delete them, User B on the next invocation (using the same warm container) might read that file.
+    *   *Disk Exhaustion Risk:* The `/tmp` directory accumulates files over multiple invocations, leading to random, hard-to-trace *No space left on device* errors.
+*   **The Solution:** Always wrap temporary file writing in a `try...finally` block to ensure files are actively deleted immediately after processing, independent of the Lambda execution lifecycle.
+
+---
+
+### Post Information
+*   **Facebook Group:** AWS Study Group
+*   **Original Post Link:** [Facebook Post Link](https://www.facebook.com/groups/awsstudygroupfcj/permalink/2229330564498570/)
