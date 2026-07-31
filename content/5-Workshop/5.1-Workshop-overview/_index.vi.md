@@ -38,14 +38,55 @@ Dưới đây là sơ đồ kiến trúc mô tả cấu trúc phân tầng và l
  
 ![Architecture Diagram](/images/5-Workshop/5.1-Workshop-overview/diagram1.png)
  
-**Luồng xử lý chính (theo số trên sơ đồ):**
-1. Người dùng truy cập ứng dụng qua Internet.
-2. CloudFront lấy tài nguyên tĩnh (HTML/JS/CSS) từ S3 Bucket FrontEnd.
-3–4. CloudFront chuyển tiếp các request API qua Internet Gateway đến Application Load Balancer.
-5. ALB phân phối traffic tới ECS Task (Fargate) trong Backend Container.
-6–7. Backend gọi API VNPay để tạo URL thanh toán và nhận kết quả trạng thái thanh toán.
-8. Backend ghi/đọc dữ liệu người dùng, sản phẩm, đơn hàng vào RDS.
-Ở luồng CI/CD: Developer commit code lên Github, build Docker image và push lên **Amazon ECR**; thay đổi cấu hình/hạ tầng được cập nhật vào VPC.
+#### Usecase
+| STT | Use case | API sử dụng | Công dụng |
+|---|---|---|---|
+| 1 | Đăng ký tài khoản | POST `/api/auth/register` | Tạo tài khoản mới, trả về JWT để đăng nhập luôn |
+| 2 | Đăng nhập | POST `/api/auth/login` | Xác thực email/password, trả về JWT dùng cho các request sau |
+| 3 | Tìm kiếm & lọc sản phẩm | GET `/api/products` | Xem danh sách sản phẩm, hỗ trợ `keyword`, `categoryId`, `minPrice`, `maxPrice`, phân trang & sắp xếp |
+| 4 | Xem chi tiết sản phẩm | GET `/api/products/{id}` | Lấy thông tin 1 sản phẩm cụ thể |
+| 5 | Tạo sản phẩm (Admin) | POST `/api/products` | Admin thêm sản phẩm mới vào catalog |
+| 6 | Cập nhật sản phẩm (Admin) | PUT `/api/products/{id}` | Admin chỉnh sửa thông tin sản phẩm |
+| 7 | Xoá sản phẩm (Admin) | DELETE `/api/products/{id}` | Admin gỡ sản phẩm khỏi catalog |
+| 8 | Xem đánh giá sản phẩm | GET `/api/products/{productId}/reviews` | Xem danh sách review của 1 sản phẩm (public) |
+| 9 | Viết đánh giá | POST `/api/products/{productId}/reviews` | User đăng review (sao 1–5, comment tối đa 2000 ký tự), mỗi user chỉ review 1 lần/sản phẩm |
+| 10 | Sửa đánh giá | PUT `/api/reviews/{reviewId}` | Chủ review chỉnh sửa review của chính mình |
+| 11 | Xoá đánh giá | DELETE `/api/reviews/{reviewId}` | Chủ review xoá review của chính mình |
+| 12 | Xem danh mục | GET `/api/categories` | Xem toàn bộ danh mục sản phẩm (public) |
+| 13 | Xem chi tiết danh mục | GET `/api/categories/{id}` | Xem 1 danh mục cụ thể |
+| 14 | Tạo danh mục (Admin) | POST `/api/categories` | Admin thêm danh mục mới |
+| 15 | Cập nhật danh mục (Admin) | PUT `/api/categories/{id}` | Admin sửa danh mục |
+| 16 | Xoá danh mục (Admin) | DELETE `/api/categories/{id}` | Admin xoá danh mục |
+| 17 | Xem giỏ hàng | GET `/api/cart` | User xem giỏ hàng hiện tại của mình |
+| 18 | Thêm vào giỏ hàng | POST `/api/cart/items` | User thêm sản phẩm vào giỏ |
+| 19 | Cập nhật số lượng trong giỏ | PUT `/api/cart/items/{itemId}` | User chỉnh số lượng sản phẩm trong giỏ |
+| 20 | Xoá sản phẩm khỏi giỏ | DELETE `/api/cart/items/{itemId}` | User xoá 1 item khỏi giỏ hàng |
+| 21 | Đặt hàng (checkout) | POST `/api/orders` | Chuyển giỏ hàng thành đơn hàng, trạng thái ban đầu `PENDING` |
+| 22 | Xem đơn hàng của tôi | GET `/api/orders` | User xem danh sách đơn hàng của chính mình |
+| 23 | Xem chi tiết đơn hàng | GET `/api/orders/{id}` | User xem chi tiết 1 đơn hàng của mình |
+| 24 | Cập nhật trạng thái đơn (Admin) | PUT `/api/orders/{id}/status` | Admin cập nhật trạng thái đơn hàng (vd: đã giao, huỷ...) |
+| 25 | Xem tất cả đơn hàng (Admin) | GET `/api/orders/all` | Admin xem toàn bộ đơn hàng trong hệ thống |
+| 26 | Khởi tạo thanh toán VNPay | POST `/api/payment/vnpay/checkout/{orderId}` | Tạo link thanh toán VNPay Sandbox (`payUrl`) cho đơn hàng |
+| 27 | Nhận kết quả thanh toán (redirect) | GET `VNPAY_RETURN_URL` (`/payment-result`, phía frontend) | VNPay redirect trình duyệt về kèm query params kết quả giao dịch |
+| 28 | Xác nhận thanh toán (IPN webhook) | `VNPAY_IPN_URL` (server-to-server) | VNPay gọi ngầm về backend để cập nhật trạng thái đơn hàng chính xác, bất đồng bộ |
+| 29 | Đối soát trạng thái đơn sau thanh toán | GET `/api/orders/{orderId}` | Frontend gọi lại để lấy trạng thái chính thức (`PAID`/`PENDING`/`CANCELLED`) từ DB |
+**Luồng runtime (theo số trong sơ đồ):**
+- 1–2: User → CloudFront → S3 (serve frontend)
+- 3–6: User → Internet Gateway → ALB → ECS Cluster → Fargate (gọi API)
+- 7–8: BackEnd Container ↔ VNPay: tạo Payment URL, nhận Payment Status callback
+
+| Service | Ứng dụng |
+|---|---|
+| CloudFront + S3 | Static hosting + CDN cho frontend |
+| Internet Gateway + NAT Gateway | Kết nối internet cho public/private subnet |
+| VPC (public/private subnet, 2 AZ) | Network isolation, multi-tier |
+| ALB | Load balancing vào backend |
+| ECS Cluster + Fargate | Container orchestration, chạy BackEnd container |
+| RDS (2 AZ) | Managed database |
+| ECR | Private registry chứa Docker image |
+| CloudWatch | Monitoring/logging |
+| IAM | Access control |
+| GitHub + Docker | Build & push image lên ECR |
  
 #### Lựa chọn dịch vụ (Service Selection Rationale)
  

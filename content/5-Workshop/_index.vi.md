@@ -6,15 +6,15 @@ chapter: false
 pre: " <b> 5. </b> "
 ---
 
-# Triển khai hệ thống Shopsflow chuẩn Enterprise HA trên AWS Cloud
+# Triển khai hệ thống thương mại điện tử sử dụng AWS Cloud
 
 #### Tổng quan
 
-Trong phần thực hành (Workshop) này, chúng ta sẽ thực hiện triển khai thực tế hệ thống thương mại điện tử **Shopsflow** (bao gồm React Frontend, Spring Boot Backend API, và cơ sở dữ liệu PostgreSQL) theo kiến trúc **Doanh nghiệp có tính sẵn sàng cao (Enterprise Highly Available - HA)** và bảo mật tối đa trên **Amazon Web Services (AWS)**.
+Trong phần workshop này, chúng tôi sẽ thực hiện deploy hệ thống thương mại điện tử Business-to-Customer quy mô nhỏ **Shopsflow** (Java 21, Spring Boot 4.0.6, Spring Data JPA/Hibernate, PostgreSQL 16, Spring Security + JJWT, Swagger UI, JUnit5 + Mockito, Docker/Docker Compose, CI bằng GitHub Actions sử dụng các **Amazon Web Services (AWS)**.
 
 Mục tiêu cốt lõi của bài thực hành này bao gồm:
-* **Tính sẵn sàng cao (High Availability):** Thiết lập hạ tầng mạng VPC trên nhiều Availability Zones (Multi-AZ). Máy chủ ứng dụng EC2 được quản lý tự động bằng Auto Scaling Group (ASG) đặt sau Application Load Balancer (ALB). Cơ sở dữ liệu RDS PostgreSQL chạy ở chế độ Multi-AZ Standby.
-* **Tính bảo mật chuyên sâu (Security in Depth):** Cô lập hoàn toàn máy chủ Backend EC2 và Database RDS trong các Private Subnets. Khách hàng chỉ truy cập Frontend thông qua Amazon CloudFront CDN kết hợp tường lửa AWS WAF. Quản lý thông tin mật và khóa mã hóa thông qua AWS Secrets Manager và KMS.
+* **Tính sẵn sàng cao (High Availability):** Thiết lập hạ tầng mạng VPC trên nhiều Availability Zones. Máy chủ ứng dụng EC2 được quản lý tự động bằng Auto Scaling Group (ASG) đặt sau Application Load Balancer (ALB). Cơ sở dữ liệu RDS PostgreSQL chạy ở chế độ Multi-AZ Standby.
+* **Tính bảo mật:** Cô lập hoàn toàn máy chủ Backend EC2 và Database RDS trong các Private Subnets. Khách hàng chỉ truy cập Frontend thông qua Amazon CloudFront CDN kết hợp tường lửa AWS WAF. Quản lý thông tin mật và khóa mã hóa thông qua AWS Secrets Manager và KMS.
 * **Tối ưu hóa kết nối & Giám sát:** EC2 kết nối tới S3 thông qua VPC Gateway Endpoint để sao lưu dữ liệu riêng tư mà không cần đi qua mạng Internet. Toàn bộ logs của container và metrics hệ điều hành được thu thập tập trung lên Amazon CloudWatch.
 
 #### Nội dung bài lab

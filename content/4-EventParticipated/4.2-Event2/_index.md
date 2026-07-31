@@ -23,7 +23,7 @@ Voice AI - Building a Voice Mechanism for AI
 
 - Mr. Hieu Nghi (Renova Cloud)
 - Mr. Kiet (AWS Study Group)
-- Mr. Trung (CEO of R AI / Revve AI)
+- Mr. Trung (CEO of Revve AI / Revve AI)
 
 #### Overview - Project / Topic Overview
 

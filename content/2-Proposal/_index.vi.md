@@ -1,82 +1,98 @@
 ---
-title: "Bản đề xuất"
-date: 2026-06-15
+title: "Đề xuất"
+date: 2026-07-30
 weight: 2
 chapter: false
 pre: " <b> 2. </b> "
 ---
 
-# Nabathico - Nắm bắt thiên cơ qua xem bói hỗn hợp
-Giải pháp AWS Serverless tối giản cho ứng dụng chiêm tinh học đa văn hóa
+## Shopsflow
 
-### 1. Tóm tắt điều hành
-Nabathico là một ứng dụng xem bói kết hợp hệ thống triết học phương Đông (Tử Vi) và phương Tây (Bản đồ sao Chiêm tinh) nhằm mang lại những luận giải toàn diện, đa chiều. Nền tảng hỗ trợ người dùng tra cứu nhanh gọn thông qua giao diện di động/web mượt mà. Dự án tận dụng tối đa các dịch vụ AWS Serverless cơ bản, kết hợp AI để cung cấp các bài phân tích cá nhân hóa với chi phí duy trì hệ thống cực thấp, dễ dàng mở rộng từ một dự án cá nhân lên hàng ngàn người dùng thực tế.
+### Đề xuất triển khai ứng dụng thương mại điện tử container trên AWS
 
-### 2. Tuyên bố vấn đề
-**Vấn đề hiện tại**
-Thị trường hiện nay phân mảnh: người dùng phải cài đặt riêng biệt các ứng dụng Tử Vi và ứng dụng Bản đồ sao. Việc tự đối chiếu, tổng hợp thông tin giữa hai hệ thống lý luận (ví dụ: mâu thuẫn giữa Cung Mệnh và Sun Sign) là vô cùng phức tạp đối với người dùng phổ thông. Các hệ thống tính toán lá số hiện tại thường rời rạc, khó bảo trì.
+#### 1. Tóm tắt điều hành
 
-**Giải pháp**
-Nền tảng sử dụng một kiến trúc tối giản: ứng dụng người dùng giao tiếp với Amazon API Gateway, kích hoạt AWS Lambda để chạy các thuật toán lõi bằng Python (sử dụng thư viện `lasotuvi` và `pyswisseph`). Dữ liệu người dùng được lưu trữ đơn giản trên Amazon DynamoDB. Sau khi lập xong lá số, hệ thống gọi API của LLM (như OpenAI) để tổng hợp và xuất ra lời bình giải. Amazon Cognito được dùng để quản lý đăng nhập an toàn. Các tính năng chính bao gồm: lập lá số kép tức thời, phân tích tương quan Đông - Tây bằng AI và lưu trữ hồ sơ sinh thần.
+Shopsflow là ứng dụng thương mại điện tử full-stack gồm React/Vite frontend, Spring Boot backend, PostgreSQL database và payment flow trực tuyến. Đề xuất này tách frontend, application runtime và database để mỗi tầng có trách nhiệm, security boundary và deployment path rõ ràng.
 
-**Lợi ích và hoàn vốn đầu tư (ROI)**
-Giải pháp tạo ra một sản phẩm công nghệ ngách độc đáo, có tiềm năng thu hút lượng lớn người dùng Gen Z. Kiến trúc Serverless giúp loại bỏ chi phí máy chủ cố định (pay-as-you-go). Thời gian phát triển được rút ngắn tối đa do không phải thiết kế cơ sở hạ tầng phức tạp. Ứng dụng có thể sinh lời thông qua mô hình Freemium (miễn phí lá số cơ bản, thu phí cho luận giải AI chuyên sâu).
+Frontend được phân phối từ Amazon S3 qua Amazon CloudFront. Backend chạy container trên Amazon ECS Fargate phía sau Application Load Balancer (ALB), trong khi Amazon RDS for PostgreSQL lưu dữ liệu ở private tier. Amazon ECR lưu backend image theo version; Amazon CloudWatch hỗ trợ log và kiểm tra vận hành.
 
-### 3. Kiến trúc giải pháp (Tối giản)
-Nền tảng áp dụng kiến trúc AWS Serverless một luồng (single-flow) để xử lý yêu cầu tính toán từ thiết bị người dùng. Yêu cầu được gửi qua API, tính toán trực tiếp trên RAM của Lambda và trả về kết quả ngay lập tức, không qua các bước trung gian phức tạp.
+#### 2. Vấn đề và giải pháp đề xuất
 
-**Dịch vụ AWS sử dụng**
-*   **Amazon API Gateway:** Tiếp nhận request (thông tin ngày giờ sinh) từ ứng dụng di động/web.
-*   **AWS Lambda:** Đảm nhiệm toàn bộ logic cốt lõi (tính toán vị trí hành tinh, an sao Tử Vi, gọi AI API).
-*   **Amazon DynamoDB:** Lưu trữ NoSQL siêu tốc độ cho thông tin người dùng và lịch sử lá số đã tạo.
-*   **AWS Amplify:** Lưu trữ và triển khai liên tục giao diện Frontend.
-*   **Amazon Cognito:** Quản lý đăng ký/đăng nhập của người dùng.
+Việc chạy toàn bộ ứng dụng trên một public server sẽ gắn chặt static delivery, API runtime và database access. Điều này cũng làm lộ nhiều hạ tầng hơn cần thiết, đồng thời khiến deployment, scaling, troubleshoot và cost review khó hơn.
 
-**Thiết kế thành phần**
-*   **Frontend (Giao diện):** Ứng dụng (React Native hoặc Next.js) được thiết kế UI/UX trên Figma trước khi lập trình, gửi thông tin sinh thần lên hệ thống.
-*   **Core Engine (Lõi tính toán):** Các script Python xử lý thư viện lịch thiên văn.
-*   **AI Synthesizer:** Khối giao tiếp với LLM API để "dịch" các thông số kỹ thuật (ví dụ: góc hợp, sao chiếu mệnh) thành văn bản dễ hiểu.
+Giải pháp đề xuất sử dụng kiến trúc AWS ba tầng:
 
-### 4. Triển khai kỹ thuật
-**Các giai đoạn triển khai**
-Dự án được chia thành 4 giai đoạn tinh gọn:
-1.  **Nghiên cứu và thiết kế:** Phác thảo UI/UX trên Figma, kiểm tra các thư viện tính toán mã nguồn mở.
-2.  **Phát triển Lõi Engine (Backend):** Đóng gói thư viện `pyswisseph` và `lasotuvi` vào AWS Lambda.
-3.  **Tích hợp AI & Cơ sở dữ liệu:** Xây dựng Prompt Engineering để AI đọc hiểu dữ liệu lá số; kết nối DynamoDB.
-4.  **Kiểm thử và Ra mắt:** Lập trình Frontend, kết nối API, kiểm thử độ chính xác của múi giờ (Timezone) và đưa lên store.
+- **Frontend delivery:** CloudFront phục vụ React/Vite build từ S3 bucket private.
+- **Application tier:** Internet-facing ALB route API request đến Spring Boot container trên ECS Fargate trong private subnet.
+- **Data tier:** RDS PostgreSQL ở private tier và chỉ nhận port `5432` từ ECS security group.
 
-**Yêu cầu kỹ thuật**
-*   **Backend:** Logic xử lý viết bằng Python. Khi chạy test và cấu hình môi trường cục bộ trên Windows, sử dụng lệnh `python` (thay vì `python3`) để kích hoạt các script tính toán nhằm tránh lỗi terminal.
-*   **Thư viện:** `pyswisseph` (Bản đồ sao) và thuật toán chuyển đổi âm dương lịch (Tử Vi).
-*   **Database:** Cấu trúc JSON linh hoạt trên DynamoDB để chứa các mảng thông tin phức tạp của 12 cung hoàng đạo và 12 cung Tử Vi.
+Cách tiếp cận này giới hạn public entry point ở CloudFront và ALB, còn backend task cùng database không có public IP.
 
-### 5. Lộ trình & Mốc triển khai
-*   **Tháng 0:** Thiết kế quy trình người dùng, vẽ wireframe, thử nghiệm độ chính xác của các thư viện tính toán.
-*   **Tháng 1 (Lõi hệ thống):** Thiết lập AWS (Cognito, DynamoDB, API Gateway). Viết các hàm Lambda xử lý chuyển đổi ngày giờ và tọa độ.
-*   **Tháng 2 (AI & Trải nghiệm):** Thiết kế cấu trúc Prompt, tích hợp OpenAI API. Bắt đầu code giao diện người dùng.
-*   **Tháng 3 (Hoàn thiện):** Kết nối Frontend với Backend, kiểm thử bảo mật dữ liệu, vá lỗi hiển thị và ra mắt phiên bản v1.0.
+#### 3. Kiến trúc giải pháp
 
-### 6. Ước tính ngân sách (MVP)
-Chi phí được tối ưu cực thấp nhờ tận dụng Free Tier của AWS cho giai đoạn đầu.
-**Chi phí hạ tầng (Ước tính hàng tháng cho ~1.000 user active):**
-*   **AWS Lambda:** 0,00 USD (nằm trong giới hạn 1 triệu request miễn phí).
-*   **Amazon DynamoDB:** 0,00 USD (nằm trong giới hạn 25 GB lưu trữ miễn phí).
-*   **Amazon API Gateway:** ~0,01 USD.
-*   **AWS Amplify:** ~0,35 USD (lưu trữ và băng thông frontend).
-*   **LLM API (OpenAI/Claude):** ~5,00 USD - 10,00 USD (trả theo lượng token thực tế tạo ra từ việc luận giải lá số).
-*   **Tổng chi phí AWS/Cloud:** < 1 USD/tháng. Tổng phí vận hành (bao gồm AI): ~6-11 USD/tháng.
+![Architecture Diagram](/images/5-Workshop/5.1-Workshop-overview/diagram1.png)
+_Hình 1. Kiến trúc logic của Shopsflow. Bản cấu hình triển khai sử dụng Region `us-east-1`._
 
-### 7. Đánh giá rủi ro
-**Ma trận rủi ro**
-*   **Sai số Timezone (Múi giờ):** Ảnh hưởng cao, xác suất trung bình (giờ sinh là yếu tố sống còn của lá số).
-*   **Độ trễ API của AI (Timeout):** Ảnh hưởng trung bình, xác suất cao (LLM đôi khi mất 10-15s để phản hồi).
-*   **Vượt chi phí token AI:** Ảnh hưởng trung bình, xác suất thấp (nếu bị lạm dụng spam request).
+**Request flow**
 
-**Chiến lược giảm thiểu**
-*   **Múi giờ:** Sử dụng thư viện cơ sở dữ liệu múi giờ chuẩn quốc tế (TZ database) kết hợp Geo-coding từ Google Maps để lấy tọa độ và múi giờ chính xác tuyệt đối.
-*   **Độ trễ:** Thiết kế UI hiển thị hiệu ứng "Đang chiêm tinh..." hoặc "Đang kết nối các vì sao..." để giữ chân người dùng trong lúc đợi Lambda gọi AI.
-*   **Chi phí:** Đặt quota (hạn mức) request trên API Gateway và thiết lập cảnh báo ngân sách (Billing Alarm).
+1. User truy cập website qua CloudFront.
+2. CloudFront lấy React/Vite static artifact từ S3.
+3. Request đến `/api/*` được CloudFront forward đến ALB.
+4. ALB route request healthy đến ECS Fargate task trong private subnet.
+5. Spring Boot backend đọc và ghi dữ liệu trên RDS PostgreSQL.
 
-### 8. Kết quả kỳ vọng
-*   **Cải tiến kỹ thuật:** Tự động hóa hoàn toàn việc an sao, lập bản đồ và tổng hợp thông tin, thay thế việc tra cứu chéo thủ công giữa các sách hay nền tảng riêng lẻ.
-*   **Giá trị dài hạn:** Xây dựng được một Engine cốt lõi về huyền học Đông - Tây, có thể đóng gói bán dưới dạng API SaaS (Software as a Service) cho các bên thứ ba, hoặc mở rộng thêm Tarot, Bát Tự trong tương lai.
+**Payment flow**
+
+Backend tạo payment parameter, gọi payment provider qua NAT Gateway và trả Payment URL về cho user. Sau khi provider phản hồi, backend xác minh signature cùng payment status trước khi cập nhật Order.
+
+#### 4. Dịch vụ AWS và cấu hình dự án
+
+| Phạm vi            | Dịch vụ và cấu hình                                                                             |
+| ------------------ | ----------------------------------------------------------------------------------------------- |
+| Region             | `us-east-1`                                                                                     |
+| Network            | `shopsflow-vpc` với hai public subnet và hai private subnet trên `us-east-1a` cùng `us-east-1b` |
+| Frontend           | Amazon S3 private origin và CloudFront distribution `fe cloudfront`                             |
+| Public domain      | `d2m34udjfc5fxq.cloudfront.net`                                                                 |
+| API entry point    | Internet-facing ALB `shopsflow-alb`                                                             |
+| Container registry | Amazon ECR repository `shopsflow-repo`                                                          |
+| Compute            | ECS cluster `shopsflow-cluster`, Fargate, `awsvpc`, private subnet, public IP disabled          |
+| Container port     | `8080`, sử dụng IP target group                                                                 |
+| Database           | RDS PostgreSQL `database-shopsflow`, private DB subnet group, port `5432`                       |
+| Observability      | CloudWatch log group `/shopsflow/ecs/backend` qua `awslogs` driver                              |
+
+#### 5. Bảo mật và vận hành
+
+Security group thực thi traffic path `CloudFront → ALB → ECS → RDS`:
+
+- `alb-sg` nhận HTTP `80` và HTTPS `443`, sau đó chỉ gửi backend traffic đến `ecs-sg` qua port `8080`.
+- `ecs-sg` chỉ nhận port `8080` từ `alb-sg`.
+- `rds-sg` chỉ nhận PostgreSQL port `5432` từ `ecs-sg`.
+
+ECS sử dụng task execution role và task role riêng. Execution role pull image từ ECR và gửi log đến CloudWatch; task role chỉ chứa application permission. Database credential được truyền tại thời điểm triển khai thay vì lưu trong source code.
+
+CloudWatch được sử dụng để theo dõi ECS task start và stop, Spring Boot error, database connectivity, payment failure, ALB target health và deployment revision.
+
+#### 6. Kế hoạch triển khai
+
+1. Tạo VPC, subnet, Internet Gateway, NAT Gateway, route table và security group.
+2. Tạo ECS task execution role và task role với least-privilege access.
+3. Tạo RDS PostgreSQL instance cùng private DB subnet group.
+4. Build backend image, push lên ECR và tạo ECS Fargate service với ALB health check.
+5. Build React/Vite frontend, upload `dist` artifact lên S3 và cấu hình CloudFront với ALB behavior `/api/*`.
+6. Cấu hình CloudWatch logging, xác thực payment cùng API flow, sau đó review chi phí và resource usage.
+
+Mỗi lần phát hành backend tạo ECR image và ECS task-definition revision mới. ECS service rollout có health check thay vì thay đổi file trong container đang chạy.
+
+#### 7. Rủi ro và giảm thiểu
+
+| Rủi ro                             | Giảm thiểu                                                                                               |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| ECS task unhealthy                 | Dùng ALB health check, ECS stopped reason và CloudWatch Logs để tách lỗi startup, routing hoặc database. |
+| Database bị lộ                     | Giữ RDS ở private tier và giới hạn port `5432` cho `ecs-sg`.                                             |
+| Payment status không chính xác     | Xác minh signature và status của provider tại backend; không chỉ tin client redirect.                    |
+| Chi phí còn phát sinh sau khi test | Theo dõi NAT Gateway, ALB, Fargate, RDS, CloudWatch và data transfer; cleanup theo dependency order.     |
+| Redeployment lỗi                   | Lưu ECR image theo version và dùng task-definition revision mới cho mỗi lần release.                     |
+
+#### 8. Kết quả kỳ vọng
+
+Đề xuất tạo ra kiến trúc thương mại điện tử có thể triển khai với frontend qua CDN, backend container private, PostgreSQL database private, API routing có health check, log có cấu trúc và payment flow được kiểm soát. Đồng thời, kiến trúc cung cấp mô hình vận hành rõ ràng để xác thực release, troubleshoot failure và cleanup resource nhằm tránh chi phí không cần thiết.

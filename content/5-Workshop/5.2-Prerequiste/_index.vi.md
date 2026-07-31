@@ -12,44 +12,131 @@ Bài viết này hướng dẫn chuẩn bị môi trường mạng riêng ảo *
 
 ### 1. Chuẩn bị (Prerequisites)
 * **Tài khoản AWS:** Có quyền quản trị.
-* **AWS Region:** Chọn Singapore (`ap-southeast-1`).
+* **AWS Region:** Chọn `us-east-1an`.
 * **Công cụ cá nhân:** Cài sẵn AWS CLI, Git và SSH Client.
 
 ---
 
 ### 2. Thiết lập Mạng (Amazon VPC Multi-AZ)
 
-Chúng ta cần xây dựng cấu trúc mạng chia tầng bảo mật bằng cách sử dụng 6 subnets phân bổ trên 2 Availability Zones (AZs) ap-southeast-1a và ap-southeast-1b.
+Chúng ta cần xây dựng cấu trúc mạng chia tầng bảo mật bằng cách sử dụng 6 subnets phân bổ trên 2 Availability Zones.
 
-#### Bước 1: Khởi tạo VPC
-1. Truy cập **AWS Console** -> **VPC** -> Chọn **Your VPCs** -> **Create VPC**.
+#### Bước 1: Khởi tạo Mạng (VPC & Subnets)
+
+1. Truy cập **AWS Console** -> **VPC** -> Chọn **Create VPC**.
 2. Thiết lập:
-   * **VPC settings:** Chọn **VPC only**.
-   * **Name tag:** `shopsflow-vpc`
+   * **VPC settings:** Chọn **VPC and more** (tự động tạo Subnet và Routing).
+   * **Name tag auto-generation:** `shopsflow-vpc`
    * **IPv4 CIDR block:** `10.0.0.0/16`
+   * **Number of Availability Zones (AZs):** `2`
+   * **Number of Public subnets:** `2`
+   * **Number of Private subnets:** `2`
+   * **NAT gateways:** Chọn **In 1 AZ** (hoặc **1 per AZ** nếu cần tính sẵn sàng cao).
 3. Chọn **Create VPC**.
 
-#### Bước 2: Tạo các Subnets
-Truy cập **VPC** -> **Subnets** -> **Create subnet**. Chọn VPC `shopsflow-vpc`. Tạo lần lượt 6 subnets sau:
+![Kết quả tạo VPC](vpc.jpg)
 
-1. **Public Subnet 1 (AZ1):** CIDR `10.0.1.0/24`, AZ: `ap-southeast-1a`, Name: `shopsflow-public-1`
-2. **Public Subnet 2 (AZ2):** CIDR `10.0.2.0/24`, AZ: `ap-southeast-1b`, Name: `shopsflow-public-2`
-3. **Private App Subnet 1 (AZ1):** CIDR `10.0.3.0/24`, AZ: `ap-southeast-1a`, Name: `shopsflow-private-app-1`
-4. **Private App Subnet 2 (AZ2):** CIDR `10.0.4.0/24`, AZ: `ap-southeast-1b`, Name: `shopsflow-private-app-2`
-5. **Private DB Subnet 1 (AZ1):** CIDR `10.0.5.0/24`, AZ: `ap-southeast-1a`, Name: `shopsflow-private-db-1`
-6. **Private DB Subnet 2 (AZ2):** CIDR `10.0.6.0/24`, AZ: `ap-southeast-1b`, Name: `shopsflow-private-db-2`
+---
 
-#### Bước 3: Tạo Internet Gateway (IGW) & NAT Gateway
-1. **Tạo Internet Gateway:**
-   * Truy cập **VPC** -> **Internet gateways** -> **Create internet gateway**.
-   * Name: `shopsflow-igw`. Click **Create**.
-   * Chọn Action -> **Attach to VPC** -> Chọn `shopsflow-vpc`.
-2. **Tạo NAT Gateway:**
-   * Truy cập **VPC** -> **NAT gateways** -> **Create NAT gateway**.
-   * Name: `shopsflow-nat-gw`.
-   * **Subnet:** Chọn `shopsflow-public-1` (Bắt buộc phải nằm ở Public Subnet).
-   * **Elastic IP allocation ID:** Chọn **Allocate Elastic IP** để cấp IP tĩnh công cộng cho NAT.
-   * Click **Create NAT gateway** và đợi trạng thái chuyển sang *Available*.
+#### Bước 2: Cấu hình Security Groups
+
+##### 2.1. Tạo Security Group cho ALB (alb-sg)
+1. Truy cập **EC2 Console** -> **Security Groups** -> Chọn **Create security group**.
+2. Thiết lập thông tin chung:
+   * **Security group name:** `alb-sg`
+   * **VPC:** Chọn `shopsflow-vpc`
+3. Cấu hình **Inbound Rules**:
+   * **Rule 1:** Type: **HTTP (80)** | Source: `0.0.0.0/0` (Anywhere)
+   * **Rule 2:** Type: **HTTPS (443)** | Source: `0.0.0.0/0` (Anywhere)
+4. Chọn **Create security group**.
+
+![Kết quả tạo ALB Security Group](alb-sg.jpg)
+![Cấu hình ALB](alb.jpg)
+
+##### 2.2. Tạo Security Group cho ECS (ecs-sg)
+1. Chọn **Create security group**.
+2. Thiết lập thông tin chung:
+   * **Security group name:** `ecs-sg`
+   * **VPC:** Chọn `shopsflow-vpc`
+3. Cấu hình **Inbound Rules**:
+   * Type: **Custom TCP** | Port range: `8080` | Source: Chọn `alb-sg`
+4. Chọn **Create security group**.
+
+![Kết quả tạo ECS Security Group](ecs-sg.jpg)
+
+##### 2.3. Tạo Security Group cho RDS (rds-sg)
+1. Chọn **Create security group**.
+2. Thiết lập thông tin chung:
+   * **Security group name:** `rds-sg`
+   * **VPC:** Chọn `shopsflow-vpc`
+3. Cấu hình **Inbound Rules**:
+   * Type: **PostgreSQL** | Port range: `5432` | Source: Chọn `ecs-sg`
+4. Chọn **Create security group**.
+
+![Kết quả tạo RDS Security Group](rds-sg.jpg)
+
+#### Bước 3: Tạo Internet Gateway (IGW), NAT Gateway & Định tuyến mạng
+
+##### 3.1. Khởi tạo và gắn kết Internet Gateway (IGW)
+1. Truy cập **AWS Console** -> **VPC** -> **Internet gateways** -> Chọn **Create internet gateway**.
+2. Thiết lập:
+   * **Name tag:** `shopsflow-igw`
+3. Chọn **Create internet gateway**.
+4. Tại màn hình chi tiết của IGW vừa tạo, chọn **Actions** -> **Attach to VPC**.
+5. Cấu hình gắn kết:
+   * **VPC:** Chọn `shopsflow-vpc`
+6. Chọn **Attach internet gateway**.
+
+![Kết quả tạo và đính kèm Internet Gateway](igw.jpg)
+
+---
+
+##### 3.2. Khởi tạo 02 NAT Gateways (Đảm bảo High Availability)
+* **Tạo NAT Gateway cho AZ 1:**
+  1. Truy cập **VPC** -> **NAT gateways** -> Chọn **Create NAT gateway**.
+  2. Thiết lập:
+     * **Name:** `shopsflow-nat-gw-1`
+     * **Subnet:** Chọn `shopsflow-public-1` (Public Subnet)
+     * **Elastic IP allocation ID:** Chọn **Allocate Elastic IP**
+  3. Chọn **Create NAT gateway**.
+
+* **Tạo NAT Gateway cho AZ 2:**
+  1. Chọn **Create NAT gateway**.
+  2. Thiết lập:
+     * **Name:** `shopsflow-nat-gw-2`
+     * **Subnet:** Chọn `shopsflow-public-2` (Public Subnet)
+     * **Elastic IP allocation ID:** Chọn **Allocate Elastic IP**
+  3. Chọn **Create NAT gateway**.
+
+*(Lưu ý: Quá trình khởi tạo NAT Gateway có thể mất từ 2–3 phút để chuyển sang trạng thái Available).*
+
+![Kết quả tạo NAT Gateways](nat-gw.jpg)
+
+---
+
+##### 3.3. Cấu hình Bảng định tuyến (Route Tables)
+* **Cấu hình Route cho Public Subnets (Trỏ ra IGW):**
+  1. Truy cập **VPC** -> **Route tables** -> Chọn Route Table liên kết với các Public Subnets (`shopsflow-public-1`, `shopsflow-public-2`).
+  2. Mở tab **Routes** -> Chọn **Edit routes** -> Chọn **Add route**.
+  3. Thiết lập:
+     * **Destination:** `0.0.0.0/0`
+     * **Target:** Chọn **Internet Gateway** -> Trỏ vào `shopsflow-igw`
+  4. Chọn **Save changes**.
+
+* **Cấu hình Route cho Private Subnet 1 (Trỏ ra NAT 1):**
+  1. Chọn Route Table của `shopsflow-private-1` -> Mở tab **Routes** -> Chọn **Edit routes** -> **Add route**.
+  2. Thiết lập:
+     * **Destination:** `0.0.0.0/0`
+     * **Target:** Chọn **NAT Gateway** -> Trỏ vào `shopsflow-nat-gw-1`
+  3. Chọn **Save changes**.
+
+* **Cấu hình Route cho Private Subnet 2 (Trỏ ra NAT 2):**
+  1. Chọn Route Table của `shopsflow-private-2` -> Mở tab **Routes** -> Chọn **Edit routes** -> **Add route**.
+  2. Thiết lập:
+     * **Destination:** `0.0.0.0/0`
+     * **Target:** Chọn **NAT Gateway** -> Trỏ vào `shopsflow-nat-gw-2`
+  3. Chọn **Save changes**.
+
 
 #### Bước 4: Thiết lập Bảng định tuyến (Route Tables)
 1. **Public Route Table (Cho Public Subnet):**
@@ -66,7 +153,7 @@ Truy cập **VPC** -> **Subnets** -> **Create subnet**. Chọn VPC `shopsflow-vp
 
 ---
 
-### 3. Cấu hình Bảo mật (KMS & Secrets Manager)
+### 4. Cấu hình Bảo mật (KMS & Secrets Manager)
 
 Để bảo vệ các chuỗi kết nối và mật khẩu nhạy cảm, chúng ta sử dụng AWS Secrets Manager được mã hóa bởi AWS KMS.
 
@@ -86,7 +173,7 @@ Truy cập **VPC** -> **Subnets** -> **Create subnet**. Chọn VPC `shopsflow-vp
 
 ---
 
-### 4. Thiết lập Firewalls (Security Groups)
+### 5. Thiết lập Firewalls (Security Groups)
 
 Chúng ta tạo 3 Security Groups để kiểm soát truy cập phân tầng:
 
@@ -100,7 +187,7 @@ Chúng ta tạo 3 Security Groups để kiểm soát truy cập phân tầng:
 
 ---
 
-### 5. Tạo IAM Role cho EC2
+### 6. Tạo IAM Role cho EC2
 
 1. Truy cập **IAM** -> **Roles** -> **Create role** -> Common use case: **EC2**.
 2. Gán các Policies sau:

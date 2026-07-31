@@ -1,82 +1,98 @@
 ---
-title: "Project Proposal"
-date: 2026-06-15
+title: "Proposal"
+date: 2026-07-30
 weight: 2
 chapter: false
 pre: " <b> 2. </b> "
 ---
 
-# Nabathico - Unveiling Destiny via Hybrid Astrology
-Minimalist AWS Serverless Solution for a Cross-Cultural Astrological Application
+## Shopsflow
 
-### 1. Executive Summary
-Nabathico is a divination application that combines Eastern philosophical systems (Zi Wei Dou Shu / Tu Vi) and Western systems (Astrological Natal Charts) to provide comprehensive, multi-dimensional interpretations. The platform enables users to quickly look up information through a smooth mobile/web interface. The project maximizes the use of basic AWS Serverless services, combined with AI, to deliver personalized analytical readings with extremely low maintenance costs, easily scalable from a personal project to thousands of active users.
+### Proposal for an AWS container-based e-commerce application
 
-### 2. Problem Statement
-**Current Problem**
-The current market is fragmented: users have to install separate applications for Eastern Tu Vi and Western Astrology. Manually comparing and synthesizing information between the two theoretical systems (e.g., conflicts between the Ascendant in Tu Vi and the Sun Sign) is extremely complicated for average users. Current chart calculation systems are often disconnected and hard to maintain.
+#### 1. Executive summary
 
-**The Solution**
-The platform utilizes a minimalist architecture: the user application communicates with Amazon API Gateway, triggering AWS Lambda to run core algorithms in Python (using the `lasotuvi` and `pyswisseph` libraries). User data is simply stored on Amazon DynamoDB. After generating the charts, the system calls an LLM API (such as OpenAI) to synthesize and output the interpretation. Amazon Cognito is used for secure login management. Key features include: instant dual-chart generation, East-West correlation analysis via AI, and birth profile storage.
+Shopsflow is a full-stack e-commerce application with a React/Vite frontend, a Spring Boot backend, PostgreSQL data storage, and an online payment flow. This proposal separates the frontend, application runtime, and database so that each layer has a clear responsibility, security boundary, and deployment path.
 
-**Benefits and Return on Investment (ROI)**
-The solution creates a unique niche tech product with the potential to attract a large Gen Z user base. The Serverless architecture eliminates fixed server costs (pay-as-you-go). Development time is drastically reduced as there is no need to design complex infrastructure. The app can generate revenue through a Freemium model (free basic charts, paid in-depth AI interpretations).
+The frontend is delivered from Amazon S3 through Amazon CloudFront. The backend runs as a container on Amazon ECS Fargate behind an Application Load Balancer (ALB), while Amazon RDS for PostgreSQL stores application data privately. Amazon ECR stores versioned backend images; Amazon CloudWatch supports logs and operational checks.
 
-### 3. Solution Architecture (Minimalist)
-The platform applies a single-flow AWS Serverless architecture to process calculation requests from user devices. Requests are sent via API, computed directly in Lambda's RAM, and results are returned instantly without complex intermediary steps.
+#### 2. Problem statement and proposed solution
 
-**AWS Services Used**
-*   **Amazon API Gateway:** Receives requests (birth date and time data) from the mobile/web app.
-*   **AWS Lambda:** Handles all core logic (calculating planetary positions, arranging Tu Vi stars, calling AI API).
-*   **Amazon DynamoDB:** Ultra-fast NoSQL storage for user profiles and generated chart history.
-*   **AWS Amplify:** Hosting and continuous deployment for the Frontend interface.
-*   **Amazon Cognito:** Manages user registration/login.
+Running the complete application on one public server would couple static delivery, API runtime, and database access. It would also expose more infrastructure than necessary and make deployment, scaling, troubleshooting, and cost review harder.
 
-**Component Design**
-*   **Frontend (Interface):** The application (React Native or Next.js) is designed for UI/UX on Figma before coding, sending birth data to the system.
-*   **Core Engine (Backend):** Python scripts processing astronomical ephemeris libraries.
-*   **AI Synthesizer:** The module communicating with the LLM API to "translate" technical parameters (e.g., aspects, ruling stars) into easy-to-understand text.
+The proposed solution uses a three-tier AWS architecture:
 
-### 4. Technical Implementation
-**Implementation Phases**
-The project is divided into 4 streamlined phases:
-1.  **Research & Design:** Sketch UI/UX on Figma, test open-source calculation libraries.
-2.  **Core Engine Development (Backend):** Package `pyswisseph` and `lasotuvi` libraries into AWS Lambda.
-3.  **AI & Database Integration:** Build Prompt Engineering for AI to comprehend chart data; connect DynamoDB.
-4.  **Testing & Launch:** Code the Frontend, connect APIs, test Timezone accuracy, and publish to app stores.
+- **Frontend delivery:** CloudFront serves the React/Vite build from a private S3 bucket.
+- **Application tier:** An internet-facing ALB routes API requests to Spring Boot containers on ECS Fargate in private subnets.
+- **Data tier:** RDS PostgreSQL remains private and accepts port `5432` only from the ECS security group.
 
-**Technical Requirements**
-*   **Backend:** Processing logic written in Python. When running tests and configuring the local environment on Windows, use the `python` command (instead of `python3`) to execute calculation scripts to avoid terminal errors.
-*   **Libraries:** `pyswisseph` (Western Natal Chart) and lunisolar calendar conversion algorithms (Zi Wei Dou Shu).
-*   **Database:** Flexible JSON structure on DynamoDB to store complex data arrays of the 12 zodiac signs and 12 Tu Vi palaces.
+This approach keeps the public entry point limited to CloudFront and the ALB, while backend tasks and the database do not have public IP addresses.
 
-### 5. Roadmap & Milestones
-*   **Month 0:** Design user flows, draw wireframes, test the accuracy of calculation libraries.
-*   **Month 1 (Core System):** Set up AWS (Cognito, DynamoDB, API Gateway). Write Lambda functions to process datetime and coordinate conversions.
-*   **Month 2 (AI & Experience):** Design Prompt structure, integrate OpenAI API. Start coding the frontend UI.
-*   **Month 3 (Finalization):** Connect Frontend with Backend, test data security, patch display bugs, and launch version 1.0.
+#### 3. Solution architecture
 
-### 6. Budget Estimation (MVP)
-Costs are highly optimized by leveraging the AWS Free Tier for the initial phase.
-**Infrastructure Costs (Estimated monthly for ~1,000 active users):**
-*   **AWS Lambda:** $0.00 (within the 1 million free requests limit).
-*   **Amazon DynamoDB:** $0.00 (within the 25 GB free storage limit).
-*   **Amazon API Gateway:** ~$0.01.
-*   **AWS Amplify:** ~$0.35 (frontend hosting and bandwidth).
-*   **LLM API (OpenAI/Claude):** ~$5.00 - $10.00 (pay-as-you-go based on actual tokens generated from chart interpretations).
-*   **Total AWS/Cloud Cost:** < $1.00/month. Total operational cost (including AI): ~$6-11/month.
+![Architecture Diagram](/images/5-Workshop/5.1-Workshop-overview/diagram1.png)
+_Figure 1. Logical architecture of Shopsflow. The deployed configuration uses Region `us-east-1`._
 
-### 7. Risk Assessment
-**Risk Matrix**
-*   **Timezone Inaccuracy:** High impact, medium probability (birth time is the most vital element of a chart).
-*   **AI API Latency (Timeout):** Medium impact, high probability (LLMs sometimes take 10-15s to respond).
-*   **Exceeding AI Token Budget:** Medium impact, low probability (in case of spam request abuse).
+**Request flow**
 
-**Mitigation Strategies**
-*   **Timezone:** Use international standard timezone database libraries (TZ database) combined with Geo-coding from Google Maps to extract absolute accurate coordinates and timezones.
-*   **Latency:** Design the UI to display a "Divining..." or "Connecting the stars..." animation to retain users while Lambda waits for the AI response.
-*   **Cost:** Set request quotas on API Gateway and establish AWS Billing Alarms.
+1. A user opens the website through CloudFront.
+2. CloudFront retrieves the React/Vite static artifacts from S3.
+3. Requests to `/api/*` are forwarded by CloudFront to the ALB.
+4. The ALB routes healthy requests to ECS Fargate tasks in private subnets.
+5. The Spring Boot backend reads and writes data in RDS PostgreSQL.
 
-### 8. Expected Outcomes
-*   **Technical Improvements:** Fully automate star assignments, chart plotting, and information synthesis, replacing manual cross-referencing between separate books or platforms.
-*   **Long-term Value:** Build a core Engine for East-West occultism, which can be packaged and sold as a SaaS API for third parties, or expanded to include Tarot and Bazi (Four Pillars of Destiny) in the future.
+**Payment flow**
+
+The backend creates payment parameters, calls the payment provider through the NAT Gateway, and returns the payment URL to the user. After the provider responds, the backend validates the signature and payment status before updating the order.
+
+#### 4. AWS services and project settings
+
+| Area               | Service and configuration                                                                    |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| Region             | `us-east-1`                                                                                  |
+| Network            | `shopsflow-vpc` with two public and two private subnets across `us-east-1a` and `us-east-1b` |
+| Frontend           | Amazon S3 private origin and CloudFront distribution `fe cloudfront`                         |
+| Public domain      | `d2m34udjfc5fxq.cloudfront.net`                                                              |
+| API entry point    | Internet-facing ALB `shopsflow-alb`                                                          |
+| Container registry | Amazon ECR repository `shopsflow-repo`                                                       |
+| Compute            | ECS cluster `shopsflow-cluster`, Fargate, `awsvpc`, private subnets, public IP disabled      |
+| Container port     | `8080`, with an IP target group                                                              |
+| Database           | RDS PostgreSQL `database-shopsflow`, private DB subnet group, port `5432`                    |
+| Observability      | CloudWatch log group `/shopsflow/ecs/backend` through the `awslogs` driver                   |
+
+#### 5. Security and operations
+
+Security groups enforce the traffic path `CloudFront → ALB → ECS → RDS`:
+
+- `alb-sg` accepts HTTP `80` and HTTPS `443`, then sends backend traffic only to `ecs-sg` on port `8080`.
+- `ecs-sg` accepts port `8080` only from `alb-sg`.
+- `rds-sg` accepts PostgreSQL port `5432` only from `ecs-sg`.
+
+ECS uses separate task execution and task roles. The execution role pulls images from ECR and delivers logs to CloudWatch; the task role contains only application permissions. Database credentials are supplied during deployment rather than stored in source code.
+
+CloudWatch is used to review ECS task starts and stops, Spring Boot errors, database connectivity, payment failures, ALB target health, and deployment revisions.
+
+#### 6. Implementation plan
+
+1. Create the VPC, subnets, Internet Gateway, NAT Gateways, route tables, and security groups.
+2. Create the ECS task execution role and task role with least-privilege access.
+3. Create the RDS PostgreSQL instance and private DB subnet group.
+4. Build the backend image, push it to ECR, and create the ECS Fargate service with ALB health checks.
+5. Build the React/Vite frontend, upload the `dist` artifacts to S3, and configure CloudFront with the ALB `/api/*` behavior.
+6. Configure CloudWatch logging, validate payment and API flows, then review cost and resource usage.
+
+Each backend release produces a new ECR image and ECS task-definition revision. The ECS service performs a health-checked rollout rather than changing files inside a running container.
+
+#### 7. Risks and mitigation
+
+| Risk                     | Mitigation                                                                                                       |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| Unhealthy ECS tasks      | Use ALB health checks, ECS stopped reasons, and CloudWatch Logs to isolate startup, routing, or database errors. |
+| Database exposure        | Keep RDS private and restrict port `5432` to `ecs-sg`.                                                           |
+| Incorrect payment status | Validate the provider signature and status on the backend; do not trust client redirects alone.                  |
+| Cost left after testing  | Review NAT Gateway, ALB, Fargate, RDS, CloudWatch, and data-transfer usage; clean up in dependency order.        |
+| Failed redeployment      | Keep versioned ECR images and use a new task-definition revision for each release.                               |
+
+#### 8. Expected outcomes
+
+The proposal delivers a deployable e-commerce architecture with a CDN-backed frontend, private containerized backend, private PostgreSQL database, health-checked API routing, structured logging, and a controlled payment flow. It also provides a clear operational model for validating releases, troubleshooting failures, and cleaning up resources to avoid unnecessary cost.

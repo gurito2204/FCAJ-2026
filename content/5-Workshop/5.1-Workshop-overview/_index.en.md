@@ -9,24 +9,26 @@ pre: " <b> 5.1. </b> "
 ### 1. Project Idea & Objectives
  
 #### Background & Problem Statement
-**Shopsflow** is a complete full-stack e-commerce system consisting of a Customer-facing Storefront for browsing, purchasing products, and checking out online through the VNPay payment gateway, together with an Admin Portal for managing the product catalog, tracking orders, managing inventory, and viewing revenue analytics.
+The **Shopsflow** system is a complete full-stack e-commerce application featuring a Storefront for product search, shopping, and online payment via the VNPay gateway, alongside an Admin Portal for product catalog management, order tracking, inventory management, and revenue analytics.
  
-The target customers are small and medium-sized businesses (SMBs) and traditional retail shop owners who want to move online at an optimized cost, while retaining full ownership of their source code and database without depending on third-party SaaS platforms.
+The target audience consists of small and medium-sized businesses (SMBs) and traditional retail store owners looking to undergo digital transformation with optimized costs and complete autonomy over source code and databases, without depending on third-party SaaS platforms.
  
-The system addresses the following problems:
-* **Reducing downtime and deployment risk:** Eliminates environment conflicts (library version mismatches between local machines and servers) through containerization (Docker), packaging the application into images and running them on **Amazon ECS (Fargate)** instead of installing directly on a server.
-* **Data security:** Prevents customer data leaks by placing the backend container tasks and database inside isolated Private Subnets.
-* **Data durability:** Automates periodic backups of the PostgreSQL database to avoid data loss in the event of a failure.
-* **Centralized monitoring:** Centralizes all application logs and system metrics on CloudWatch for easier troubleshooting.
-#### Specific Goals
-* **Desired Outputs:**
-  * **Frontend Web:** A React + Vite Single Page Application (SPA), deployed as static assets on Amazon S3 and distributed via the Amazon CloudFront CDN.
-  * **Backend API:** A Spring Boot RESTful API, packaged as a Docker image, stored on **Amazon ECR (Elastic Container Registry)**, and run as a task on **Amazon ECS using the Fargate launch type** (serverless containers, no EC2 instances to manage), placed in a Private Subnet behind an Application Load Balancer (ALB).
-  * **Database RDS:** A PostgreSQL database on Amazon RDS, placed in a Private Subnet with public accessibility fully disabled.
-  * **Security & Encryption:** AWS Secrets Manager and KMS are used to store passwords and other sensitive configuration.
-  * **Monitoring System:** A centralized dashboard and logs on CloudWatch for both ECS tasks and RDS.
-#### Program Fit
-The project uses core and advanced AWS services including: **VPC**, **ECS (Fargate)**, **ECR**, **RDS**, **CloudFront**, **S3**, **Application Load Balancer**, **Secrets Manager**, **KMS**, **CloudWatch**, and **IAM**. The infrastructure follows the security and high-availability design principles of the AWS Well-Architected Framework, making it a strong hands-on capstone topic for learners in the First Cloud Journey (FCJ) program.
+The system solves the following challenges:
+* **Reducing downtime and deployment risks:** Mitigating environment conflicts (library version discrepancies between local machines and servers) using containerization (Docker), packaging the application into an image, and running it on **Amazon ECS (Fargate)** instead of direct server installations.
+* **Data security:** Preventing customer data leaks by placing backend containers and databases in isolated private networks (Private Subnets).
+* **Data protection:** Automating periodic PostgreSQL database backups to prevent information loss during incidents.
+* **Centralized monitoring:** Consolidating all application logs and system metrics into CloudWatch for streamlined troubleshooting.
+
+#### Specific Objectives
+* **Expected Outputs:**
+  * **Frontend Web:** React + Vite Single Page Application (SPA) statically deployed on Amazon S3 and distributed via Amazon CloudFront CDN.
+  * **Backend API:** Spring Boot RESTful API packaged in Docker, storing images on **Amazon ECR (Elastic Container Registry)**, and running as tasks on **Amazon ECS with the Fargate launch type** (serverless containers, eliminating the need to manage EC2 instances manually) located in a Private Subnet behind an Application Load Balancer (ALB).
+  * **Database RDS:** PostgreSQL database on Amazon RDS, located in a Private Subnet with public access completely disabled.
+  * **Security & Encryption:** Using AWS Secrets Manager and KMS to store passwords and sensitive configurations.
+  * **Monitoring System:** A centralized monitoring dashboard and logging on CloudWatch for both ECS tasks and RDS.
+
+#### Program Alignment
+The project utilizes foundational and advanced AWS services including **VPC**, **ECS (Fargate)**, **ECR**, **RDS**, **CloudFront**, **S3**, **Application Load Balancer**, **Secrets Manager**, **KMS**, **CloudWatch**, and **IAM**. The infrastructure design adheres to the AWS Well-Architected Framework, making it ideal as a practical capstone project for participants in the First Cloud Journey (FCJ) program.
  
 ---
  
@@ -34,31 +36,74 @@ The project uses core and advanced AWS services including: **VPC**, **ECS (Farga
  
 #### Architecture Diagram
  
-Below is the architecture diagram describing the layered structure and data flow of the Shopsflow application when deployed on AWS infrastructure:
+The architecture diagram below illustrates the layered structure and data flow of the Shopsflow application when deployed on AWS infrastructure:
  
 ![Architecture Diagram](/images/5-Workshop/5.1-Workshop-overview/diagram1.png)
  
-**Main processing flow (numbered on the diagram):**
-1. The user accesses the application over the Internet.
-2. CloudFront fetches static assets (HTML/JS/CSS) from the S3 FrontEnd Bucket.
-3–4. CloudFront forwards API requests through the Internet Gateway to the Application Load Balancer.
-5. The ALB routes traffic to the ECS Task (Fargate) inside the Backend Container.
-6–7. The backend calls the VNPay API to create a payment URL and receive the payment status.
-8. The backend reads/writes user, product, and order data to RDS.
-On the CI/CD side: the developer commits code to GitHub, builds the Docker image, and pushes it to **Amazon ECR**; configuration/infrastructure changes are then updated into the VPC.
+#### Usecase
+| No. | Use Case | API Used | Description |
+|---|---|---|---|
+| 1 | Register account | POST `/api/auth/register` | Create a new account, returns a JWT for immediate login |
+| 2 | Login | POST `/api/auth/login` | Authenticate email/password, returns a JWT for subsequent requests |
+| 3 | Search & filter products | GET `/api/products` | View product list, supports `keyword`, `categoryId`, `minPrice`, `maxPrice`, pagination & sorting |
+| 4 | View product details | GET `/api/products/{id}` | Retrieve information for a specific product |
+| 5 | Create product (Admin) | POST `/api/products` | Admin adds a new product to the catalog |
+| 6 | Update product (Admin) | PUT `/api/products/{id}` | Admin updates product information |
+| 7 | Delete product (Admin) | DELETE `/api/products/{id}` | Admin removes a product from the catalog |
+| 8 | View product reviews | GET `/api/products/{productId}/reviews` | View review list for a product (public) |
+| 9 | Write a review | POST `/api/products/{productId}/reviews` | User posts a review (1–5 stars, comment up to 2000 characters), limited to 1 review per user/product |
+| 10 | Edit review | PUT `/api/reviews/{reviewId}` | Review author edits their own review |
+| 11 | Delete review | DELETE `/api/reviews/{reviewId}` | Review author deletes their own review |
+| 12 | View categories | GET `/api/categories` | View all product categories (public) |
+| 13 | View category details | GET `/api/categories/{id}` | View a specific category |
+| 14 | Create category (Admin) | POST `/api/categories` | Admin adds a new category |
+| 15 | Update category (Admin) | PUT `/api/categories/{id}` | Admin updates a category |
+| 16 | Delete category (Admin) | DELETE `/api/categories/{id}` | Admin deletes a category |
+| 17 | View cart | GET `/api/cart` | User views their current shopping cart |
+| 18 | Add to cart | POST `/api/cart/items` | User adds a product to the cart |
+| 19 | Update cart quantity | PUT `/api/cart/items/{itemId}` | User updates product quantity in the cart |
+| 20 | Remove item from cart | DELETE `/api/cart/items/{itemId}` | User removes an item from the cart |
+| 21 | Checkout | POST `/api/orders` | Converts the cart into an order with an initial `PENDING` status |
+| 22 | View my orders | GET `/api/orders` | User views their list of orders |
+| 23 | View order details | GET `/api/orders/{id}` | User views details of a specific order |
+| 24 | Update order status (Admin) | PUT `/api/orders/{id}/status` | Admin updates order status (e.g., delivered, cancelled...) |
+| 25 | View all orders (Admin) | GET `/api/orders/all` | Admin views all orders in the system |
+| 26 | Initialize VNPay payment | POST `/api/payment/vnpay/checkout/{orderId}` | Generates a VNPay Sandbox payment link (`payUrl`) for the order |
+| 27 | Receive payment result (redirect) | GET `VNPAY_RETURN_URL` (`/payment-result` on frontend) | VNPay redirects browser with transaction result query parameters |
+| 28 | Confirm payment (IPN webhook) | `VNPAY_IPN_URL` (server-to-server) | VNPay calls the backend asynchronously to update the exact order status |
+| 29 | Reconcile order status post-payment | GET `/api/orders/{orderId}` | Frontend calls back to fetch the official status (`PAID`/`PENDING`/`CANCELLED`) from DB |
+
+**Runtime Flow (referenced by numbers in the diagram):**
+- 1–2: User → CloudFront → S3 (serve frontend)
+- 3–6: User → Internet Gateway → ALB → ECS Cluster → Fargate (API calls)
+- 7–8: Backend Container ↔ VNPay: generate Payment URL, receive Payment Status callback
+
+| Service | Application |
+|---|---|
+| CloudFront + S3 | Static hosting + CDN for frontend |
+| Internet Gateway + NAT Gateway | Internet connectivity for public/private subnets |
+| VPC (public/private subnets, 2 AZs) | Network isolation, multi-tier |
+| ALB | Load balancing into the backend |
+| ECS Cluster + Fargate | Container orchestration, runs backend containers |
+| RDS (2 AZs) | Managed database |
+| ECR | Private registry storing Docker images |
+| CloudWatch | Monitoring/logging |
+| IAM | Access control |
+| GitHub + Docker | Build & push images to ECR |
  
 #### Service Selection Rationale
  
 * **Amazon CloudFront & Amazon S3 (Frontend):**
-  * *Rationale:* Hosting static assets (HTML/JS/CSS/images) on S3 and distributing them via CloudFront completely offloads the backend, improves global page load speed through edge-location caching, and optimizes cost.
+  * *Reason for selection:* Hosting static assets (HTML/JS/CSS/Images) on S3 and distributing them via CloudFront offloads traffic completely from the backend, accelerates global page loading speed via caching at Edge Locations, and optimizes costs.
 * **Amazon ECS (Fargate) & Amazon ECR (Backend):**
-  * *Rationale:* The Spring Boot backend is packaged as a Docker image, stored in ECR, and run as a task on ECS Fargate — a serverless container model that removes the need to manually manage, patch, or scale underlying EC2 instances. The ALB distributes traffic to ECS tasks placed in a Private Subnet, and the ECS Service can automatically adjust the number of running tasks based on system load.
+  * *Reason for selection:* Packaging the Spring Boot backend into a Docker image, storing it on ECR, and running it as tasks on ECS Fargate—a serverless container model that eliminates the need to manually manage, patch, or scale underlying EC2 instances. The ALB distributes traffic to ECS tasks placed in Private Subnets, and the ECS service can automatically scale the number of parallel running tasks based on system load.
 * **Amazon RDS PostgreSQL:**
-  * *Rationale:* A managed database service that reduces operational overhead (patching, backups, failover) compared to self-managing PostgreSQL on a server, while sitting entirely inside a Private Subnet so it is never exposed to the Internet.
+  * *Reason for selection:* A managed database service that reduces operational overhead (patching, backups, failover) compared to self-hosting PostgreSQL on a server, while residing entirely within a Private Subnet without exposing it to the Internet.
 * **AWS Secrets Manager & KMS:**
-  * *Rationale:* Centrally stores and manages sensitive information (database password, JWT secret) encrypted with AWS KMS. The ECS Task automatically retrieves temporary credentials at runtime instead of storing plaintext configuration inside the image.
+  * *Reason for selection:* Centrally stores and manages sensitive information (Database Password, JWT Secret) encrypted using AWS KMS. ECS tasks automatically fetch temporary credentials at runtime instead of embedding raw configuration files inside the image.
 * **Application Load Balancer:**
-  * *Rationale:* Distributes traffic coming from the Internet Gateway to the ECS tasks in the Private Subnet, fully separating the public tier from the internal backend tier.
-#### Security & IAM (Security & Access Control)
-* **IAM Task Role / Execution Role:** An IAM role is attached to the ECS Task, granting permission to read secrets from Secrets Manager, pull images from ECR, and send logs/metrics to CloudWatch — following the principle of least privilege (not an EC2 instance role, since the backend does not run directly on EC2).
-* **Network Isolation:** Both the ECS Task and RDS reside entirely within Private Subnets, with no public IP addresses. Security Groups are chained as follows: `Internet` → `CloudFront` → `Internet Gateway` → `ALB SG` → `ECS Task SG` → `RDS SG`.
+  * *Reason for selection:* Distributes traffic from the Internet Gateway to ECS tasks in Private Subnets, ensuring complete separation between the public tier and the internal backend tier.
+
+#### Security & Access Control (IAM & Network Isolation)
+* **IAM Task Role / Execution Role:** Assigns IAM roles to ECS tasks to read secrets from Secrets Manager, pull images from ECR, and send logs/metrics to CloudWatch—following the principle of least privilege (avoiding EC2 instance roles since the backend does not run directly on EC2).
+* **Network Isolation:** ECS tasks and RDS reside entirely within Private Subnets without public IP addresses. Security Groups are structured in a chained manner: `Internet` → `CloudFront` → `Internet Gateway` → `ALB SG` → `ECS Task SG` → `RDS SG`.
