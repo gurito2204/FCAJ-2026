@@ -1,5 +1,5 @@
 baseURL = "https://gurito2204.github.io/FCAJ-2026/"
-relativeURLs = false
+relativeURLs = true
 canonifyURLs = false
 defaultContentLanguage = "en"
 
