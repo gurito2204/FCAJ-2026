@@ -1,7 +1,7 @@
 ---
 title: "Nhật ký công việc Tuần 6"
 date: 2026-07-29
-weight: 1
+weight: 6
 chapter: false
 pre: " <b> 1.6. </b> "
 ---

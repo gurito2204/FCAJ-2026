@@ -1,6 +1,6 @@
 baseURL = "https://gurito2204.github.io/FCAJ-2026/"
-relativeURLs = true
-canonifyURLs = false
+relativeURLs = false
+canonifyURLs = true
 defaultContentLanguage = "en"
 
 # Change the default theme to be use when building the site with Hugo
