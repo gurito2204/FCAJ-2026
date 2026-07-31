@@ -1,58 +1,28 @@
 ---
-title: "Worklog Tuần 6"
-date: 2024-01-01
+title: "Nhật ký công việc Tuần 6"
+date: 2026-07-29
 weight: 1
 chapter: false
 pre: " <b> 1.6. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
 
+### Mục tiêu Tuần 6:
 
-### Mục tiêu tuần 6:
+* Nghiên cứu các phương án triển khai và các dịch vụ AWS có thể áp dụng cho ứng dụng.
+* Triển khai thành công Frontend và phối hợp điều chỉnh các tuyến đường (route) dịch vụ Backend.
+* Kiểm thử các tuyến đường truy cập của người dùng để đảm bảo tính ổn định và chính xác.
 
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+### Các công việc thực hiện trong tuần:
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Tài liệu tham khảo |
+| --- | --- | --- | --- | --- |
+| 2 | - Tìm hiểu các phương án triển khai ứng dụng và các dịch vụ AWS phù hợp | 25/07/2026 | 28/07/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 3 | - Triển khai Frontend của ứng dụng trên hạ tầng AWS | 25/07/2026 | 29/07/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 4 | - Phối hợp cùng nhóm hiệu chỉnh các tuyến đường (route) và kết nối Backend | 25/07/2026 | 29/07/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 5 | - Kiểm thử toàn bộ các tuyến đường (route) và luồng sử dụng của người dùng | 25/07/2026 | 29/07/2026 | <https://cloudjourney.awsstudygroup.com/> |
 
-### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
+### Kết quả đạt được Tuần 6:
 
-
-### Kết quả đạt được tuần 6:
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Đã tạo và cấu hình AWS Free Tier account thành công.
-
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
-
+* Xác định và đánh giá được các phương án cùng dịch vụ AWS tối ưu để triển khai kiến trúc web.
+* Triển khai thành công môi trường Frontend lên AWS và đảm bảo khả năng truy cập ổn định.
+* Phối hợp hiệu quả với nhóm Backend để đồng bộ, tối ưu và xử lý các lỗi liên quan đến tích hợp route.
+* Hoàn tất kiểm thử các tuyến đường người dùng (user routes), đảm bảo ứng dụng vận hành trơn tru.

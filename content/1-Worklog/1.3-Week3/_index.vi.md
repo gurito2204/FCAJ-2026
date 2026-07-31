@@ -1,59 +1,33 @@
 ---
 title: "Worklog Tuần 3"
-date: 2024-01-01
-weight: 1
+date: 2026-06-29
+weight: 3
 chapter: false
 pre: " <b> 1.3. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
-
 
 ### Mục tiêu tuần 3:
 
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+- Tìm hiểu và biết cách sử dụng dịch vụ máy chủ ảo AWS EC2.
+- Tìm hiểu và thực hành trên môi trường phát triển AWS Cloud9.
+- Tìm hiểu và biết cách sử dụng dịch vụ lưu trữ Amazon S3.
+- Tìm hiểu và biết cách sử dụng dịch vụ cơ sở dữ liệu Amazon RDS.
+- Tìm hiểu và biết cách sử dụng Amazon Lightsail.
 
 ### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Thứ | Công việc                             | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
+| --- | ------------------------------------- | ------------ | --------------- | -------------- |
+| 2   | - Tìm hiểu & Sử dụng AWS EC2          | 29/06/2026   | 04/07/2026      |<https://cloudjourney.awsstudygroup.com/> |
+| 2   | - Tìm hiểu & Sử dụng AWS Cloud9       | 29/06/2026   | 04/07/2026      |<https://cloudjourney.awsstudygroup.com/> |
+| 2   | - Tìm hiểu & Sử dụng Amazon S3        | 29/06/2026   | 04/07/2026      |<https://cloudjourney.awsstudygroup.com/> |
+| 2   | - Tìm hiểu & Sử dụng Amazon RDS       | 29/06/2026   | 04/07/2026      | <https://cloudjourney.awsstudygroup.com/>|
+| 2   | - Tìm hiểu & Sử dụng Amazon Lightsail | 29/06/2026   | 04/07/2026      | <https://cloudjourney.awsstudygroup.com/> |
 
 ### Kết quả đạt được tuần 3:
 
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Đã tạo và cấu hình AWS Free Tier account thành công.
-
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
-
+- Đã tìm hiểu và biết cách khởi tạo, sử dụng dịch vụ máy chủ ảo AWS EC2. Đặc biệt ở hệ điều hành Windown, phải chủ động gỡ quyền admin và các user khác để có thể nhận key pem.
+- Đã tìm hiểu và thực hành thành thạo trên môi trường phát triển AWS Cloud9.
+- Đã hiểu rõ nguyên lý và áp dụng thành công dịch vụ lưu trữ Amazon S3.
+- Đã tìm hiểu và biết cách cấu hình, sử dụng dịch vụ cơ sở dữ liệu Amazon RDS.
+- Đã tìm hiểu và triển khai thành công các ứng dụng với Amazon Lightsail.

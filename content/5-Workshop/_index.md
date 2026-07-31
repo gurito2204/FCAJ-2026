@@ -1,31 +1,29 @@
 ---
 title: "Workshop"
-date: 2024-01-01
+date: 2026-06-15
 weight: 5
 chapter: false
 pre: " <b> 5. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-# Secure Hybrid Access to S3 using VPC Endpoints
+# Deploying Shopsflow on AWS with Enterprise HA Architecture
 
 #### Overview
 
-**AWS PrivateLink** provides private connectivity to AWS services from VPCs and your on-premises networks, without exposing your traffic to the Public Internet.
+In this hands-on workshop, we will perform the deployment of the **Shopsflow** e-commerce system (React Frontend, Spring Boot Backend API, and PostgreSQL database) using a secure, multi-tier **Enterprise Highly Available (HA)** architecture on **Amazon Web Services (AWS)**.
 
-In this lab, you will learn how to create, configure, and test VPC endpoints that enable your workloads to reach AWS services without traversing the Public Internet.
+The core objectives of this workshop are:
+* **High Availability (HA):** Design a custom VPC topology spanning multiple Availability Zones (Multi-AZ). The application backend EC2 instances are managed by an Auto Scaling Group (ASG) behind an Application Load Balancer (ALB). The relational database is deployed as a Multi-AZ RDS PostgreSQL instance.
+* **Defense in Depth (Security):** Fully isolate backend EC2 instances and the RDS PostgreSQL database in Private Subnets. Direct public access is restricted; the React frontend is hosted on S3 and distributed globally through Amazon CloudFront CDN integrated with AWS WAF (Web Application Firewall). Credentials and keys are securely stored in AWS Secrets Manager and KMS.
+* **Optimized Connections & Observability:** Establish a VPC Gateway Endpoint for S3 to process backups over the private AWS backbone. System logs, container logs, and instance metrics are aggregated into Amazon CloudWatch.
 
-You will create two types of endpoints to access Amazon S3: a Gateway VPC endpoint, and an Interface VPC endpoint. These two types of VPC endpoints offer different benefits depending on if you are accessing Amazon S3 from the cloud or your on-premises location
-+ **Gateway** - Create a gateway endpoint to send traffic to Amazon S3 or DynamoDB using private IP addresses.You route traffic from your VPC to the gateway endpoint using route tables.
-+ **Interface** - Create an interface endpoint to send traffic to endpoint services that use a Network Load Balancer to distribute traffic. Traffic destined for the endpoint service is resolved using DNS.
+#### Lab Outline
 
-#### Content
+This workshop is structured into the following step-by-step guides:
 
-1. [Workshop overview](5.1-Workshop-overview)
-2. [Prerequiste](5.2-Prerequiste/)
-3. [Access S3 from VPC](5.3-S3-vpc/)
-4. [Access S3 from On-premises](5.4-S3-onprem/)
-5. [VPC Endpoint Policies (Bonus)](5.5-Policy/)
-6. [Clean up](5.6-Cleanup/)
+1. [Introduction & Architecture Diagram](5.1-workshop-overview/)
+2. [Network Configuration (VPC Multi-AZ), Access Control & Secrets](5.2-prerequiste/)
+3. [Provisioning Amazon RDS PostgreSQL Database (Multi-AZ)](5.3-rds/)
+4. [Deploying Frontend (S3+CloudFront) & Backend (ALB+ASG)](5.4-ec2/)
+5. [Configuring CloudWatch Agent & Automated Private Backups](5.5-monitoring-backup/)
+6. [Resource Clean-up](5.6-cleanup/)

@@ -1,242 +1,125 @@
 ---
-title : "Prerequiste"
-date : 2024-01-01 
-weight : 2 
-chapter : false
-pre : " <b> 5.2. </b> "
+title: "Network Setup, Access Control & Secrets"
+date: 2026-06-15
+weight: 2
+chapter: false
+pre: " <b> 5.2. </b> "
 ---
 
-#### IAM permissions
-Add the following IAM permission policy to your user account to deploy and cleanup this workshop.
-```
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": [
-                "cloudformation:*",
-                "cloudwatch:*",
-                "ec2:AcceptTransitGatewayPeeringAttachment",
-                "ec2:AcceptTransitGatewayVpcAttachment",
-                "ec2:AllocateAddress",
-                "ec2:AssociateAddress",
-                "ec2:AssociateIamInstanceProfile",
-                "ec2:AssociateRouteTable",
-                "ec2:AssociateSubnetCidrBlock",
-                "ec2:AssociateTransitGatewayRouteTable",
-                "ec2:AssociateVpcCidrBlock",
-                "ec2:AttachInternetGateway",
-                "ec2:AttachNetworkInterface",
-                "ec2:AttachVolume",
-                "ec2:AttachVpnGateway",
-                "ec2:AuthorizeSecurityGroupEgress",
-                "ec2:AuthorizeSecurityGroupIngress",
-                "ec2:CreateClientVpnEndpoint",
-                "ec2:CreateClientVpnRoute",
-                "ec2:CreateCustomerGateway",
-                "ec2:CreateDhcpOptions",
-                "ec2:CreateFlowLogs",
-                "ec2:CreateInternetGateway",
-                "ec2:CreateLaunchTemplate",
-                "ec2:CreateNetworkAcl",
-                "ec2:CreateNetworkInterface",
-                "ec2:CreateNetworkInterfacePermission",
-                "ec2:CreateRoute",
-                "ec2:CreateRouteTable",
-                "ec2:CreateSecurityGroup",
-                "ec2:CreateSubnet",
-                "ec2:CreateSubnetCidrReservation",
-                "ec2:CreateTags",
-                "ec2:CreateTransitGateway",
-                "ec2:CreateTransitGatewayPeeringAttachment",
-                "ec2:CreateTransitGatewayPrefixListReference",
-                "ec2:CreateTransitGatewayRoute",
-                "ec2:CreateTransitGatewayRouteTable",
-                "ec2:CreateTransitGatewayVpcAttachment",
-                "ec2:CreateVpc",
-                "ec2:CreateVpcEndpoint",
-                "ec2:CreateVpcEndpointConnectionNotification",
-                "ec2:CreateVpcEndpointServiceConfiguration",
-                "ec2:CreateVpnConnection",
-                "ec2:CreateVpnConnectionRoute",
-                "ec2:CreateVpnGateway",
-                "ec2:DeleteCustomerGateway",
-                "ec2:DeleteFlowLogs",
-                "ec2:DeleteInternetGateway",
-                "ec2:DeleteNetworkInterface",
-                "ec2:DeleteNetworkInterfacePermission",
-                "ec2:DeleteRoute",
-                "ec2:DeleteRouteTable",
-                "ec2:DeleteSecurityGroup",
-                "ec2:DeleteSubnet",
-                "ec2:DeleteSubnetCidrReservation",
-                "ec2:DeleteTags",
-                "ec2:DeleteTransitGateway",
-                "ec2:DeleteTransitGatewayPeeringAttachment",
-                "ec2:DeleteTransitGatewayPrefixListReference",
-                "ec2:DeleteTransitGatewayRoute",
-                "ec2:DeleteTransitGatewayRouteTable",
-                "ec2:DeleteTransitGatewayVpcAttachment",
-                "ec2:DeleteVpc",
-                "ec2:DeleteVpcEndpoints",
-                "ec2:DeleteVpcEndpointServiceConfigurations",
-                "ec2:DeleteVpnConnection",
-                "ec2:DeleteVpnConnectionRoute",
-                "ec2:Describe*",
-                "ec2:DetachInternetGateway",
-                "ec2:DisassociateAddress",
-                "ec2:DisassociateRouteTable",
-                "ec2:GetLaunchTemplateData",
-                "ec2:GetTransitGatewayAttachmentPropagations",
-                "ec2:ModifyInstanceAttribute",
-                "ec2:ModifySecurityGroupRules",
-                "ec2:ModifyTransitGatewayVpcAttachment",
-                "ec2:ModifyVpcAttribute",
-                "ec2:ModifyVpcEndpoint",
-                "ec2:ReleaseAddress",
-                "ec2:ReplaceRoute",
-                "ec2:RevokeSecurityGroupEgress",
-                "ec2:RevokeSecurityGroupIngress",
-                "ec2:RunInstances",
-                "ec2:StartInstances",
-                "ec2:StopInstances",
-                "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
-                "ec2:UpdateSecurityGroupRuleDescriptionsIngress",
-                "iam:AddRoleToInstanceProfile",
-                "iam:AttachRolePolicy",
-                "iam:CreateInstanceProfile",
-                "iam:CreatePolicy",
-                "iam:CreateRole",
-                "iam:DeleteInstanceProfile",
-                "iam:DeletePolicy",
-                "iam:DeleteRole",
-                "iam:DeleteRolePolicy",
-                "iam:DetachRolePolicy",
-                "iam:GetInstanceProfile",
-                "iam:GetPolicy",
-                "iam:GetRole",
-                "iam:GetRolePolicy",
-                "iam:ListPolicyVersions",
-                "iam:ListRoles",
-                "iam:PassRole",
-                "iam:PutRolePolicy",
-                "iam:RemoveRoleFromInstanceProfile",
-                "lambda:CreateFunction",
-                "lambda:DeleteFunction",
-                "lambda:DeleteLayerVersion",
-                "lambda:GetFunction",
-                "lambda:GetLayerVersion",
-                "lambda:InvokeFunction",
-                "lambda:PublishLayerVersion",
-                "logs:CreateLogGroup",
-                "logs:DeleteLogGroup",
-                "logs:DescribeLogGroups",
-                "logs:PutRetentionPolicy",
-                "route53:ChangeTagsForResource",
-                "route53:CreateHealthCheck",
-                "route53:CreateHostedZone",
-                "route53:CreateTrafficPolicy",
-                "route53:DeleteHostedZone",
-                "route53:DisassociateVPCFromHostedZone",
-                "route53:GetHostedZone",
-                "route53:ListHostedZones",
-                "route53domains:ListDomains",
-                "route53domains:ListOperations",
-                "route53domains:ListTagsForDomain",
-                "route53resolver:AssociateResolverEndpointIpAddress",
-                "route53resolver:AssociateResolverRule",
-                "route53resolver:CreateResolverEndpoint",
-                "route53resolver:CreateResolverRule",
-                "route53resolver:DeleteResolverEndpoint",
-                "route53resolver:DeleteResolverRule",
-                "route53resolver:DisassociateResolverEndpointIpAddress",
-                "route53resolver:DisassociateResolverRule",
-                "route53resolver:GetResolverEndpoint",
-                "route53resolver:GetResolverRule",
-                "route53resolver:ListResolverEndpointIpAddresses",
-                "route53resolver:ListResolverEndpoints",
-                "route53resolver:ListResolverRuleAssociations",
-                "route53resolver:ListResolverRules",
-                "route53resolver:ListTagsForResource",
-                "route53resolver:UpdateResolverEndpoint",
-                "route53resolver:UpdateResolverRule",
-                "s3:AbortMultipartUpload",
-                "s3:CreateBucket",
-                "s3:DeleteBucket",
-                "s3:DeleteObject",
-                "s3:GetAccountPublicAccessBlock",
-                "s3:GetBucketAcl",
-                "s3:GetBucketOwnershipControls",
-                "s3:GetBucketPolicy",
-                "s3:GetBucketPolicyStatus",
-                "s3:GetBucketPublicAccessBlock",
-                "s3:GetObject",
-                "s3:GetObjectVersion",
-                "s3:GetBucketVersioning",
-                "s3:ListAccessPoints",
-                "s3:ListAccessPointsForObjectLambda",
-                "s3:ListAllMyBuckets",
-                "s3:ListBucket",
-                "s3:ListBucketMultipartUploads",
-                "s3:ListBucketVersions",
-                "s3:ListJobs",
-                "s3:ListMultipartUploadParts",
-                "s3:ListMultiRegionAccessPoints",
-                "s3:ListStorageLensConfigurations",
-                "s3:PutAccountPublicAccessBlock",
-                "s3:PutBucketAcl",
-                "s3:PutBucketPolicy",
-                "s3:PutBucketPublicAccessBlock",
-                "s3:PutObject",
-                "secretsmanager:CreateSecret",
-                "secretsmanager:DeleteSecret",
-                "secretsmanager:DescribeSecret",
-                "secretsmanager:GetSecretValue",
-                "secretsmanager:ListSecrets",
-                "secretsmanager:ListSecretVersionIds",
-                "secretsmanager:PutResourcePolicy",
-                "secretsmanager:TagResource",
-                "secretsmanager:UpdateSecret",
-                "sns:ListTopics",
-                "ssm:DescribeInstanceProperties",
-                "ssm:DescribeSessions",
-                "ssm:GetConnectionStatus",
-                "ssm:GetParameters",
-                "ssm:ListAssociations",
-                "ssm:ResumeSession",
-                "ssm:StartSession",
-                "ssm:TerminateSession"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
+This section guides you through preparing the **Amazon VPC** network topology spanning multiple Availability Zones (Multi-AZ), creating custom encryption keys with **AWS KMS**, securely storing credentials in **AWS Secrets Manager**, configuring **Security Groups**, and establishing access permissions via **IAM**.
 
-```
+---
 
-#### Provision resources using CloudFormation
+### 1. Prerequisites
+* **AWS Account:** Full administrative permissions.
+* **AWS Region:** Singapore (`ap-southeast-1`).
+* **Workstation Tools:** AWS CLI configured, Git, and an SSH Client.
 
-In this lab, we will use **N.Virginia region (us-east-1)**.
+---
 
-To prepare the workshop environment, deploy this **CloudFormation Template** (click link): [PrivateLinkWorkshop ](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https://s3.us-east-1.amazonaws.com/reinvent-endpoints-builders-session/Nested.yaml&stackName=PLCloudSetup). Accept all of the defaults when deploying the template. 
+### 2. Network Configuration (Amazon VPC Multi-AZ)
 
-![create stack](/images/5-Workshop/5.2-Prerequisite/create-stack1.png)
+We will build a secure, isolated multi-tier network topology utilizing 6 subnets distributed across 2 Availability Zones (AZs) `ap-southeast-1a` and `ap-southeast-1b`.
 
-+ Tick 2 acknowledgement boxes
-+ Choose **Create stack**
+#### Step 1: Initialize VPC
+1. Navigate to **AWS Console** -> **VPC** -> Choose **Your VPCs** -> Click **Create VPC**.
+2. Configure settings:
+   * **VPC settings:** Select **VPC only**.
+   * **Name tag:** `shopsflow-vpc`
+   * **IPv4 CIDR block:** `10.0.0.0/16`
+3. Click **Create VPC**.
 
-![create stack](/images/5-Workshop/5.2-Prerequisite/create-stack2.png)
+#### Step 2: Create Subnets
+Navigate to **VPC** -> **Subnets** -> Click **Create subnet**. Select the `shopsflow-vpc`. Provision the following 6 subnets:
 
-The **ClouddFormation** deployment requires about 15 minutes to complete.
+1. **Public Subnet 1 (AZ1):** CIDR `10.0.1.0/24`, AZ: `ap-southeast-1a`, Name: `shopsflow-public-1`
+2. **Public Subnet 2 (AZ2):** CIDR `10.0.2.0/24`, AZ: `ap-southeast-1b`, Name: `shopsflow-public-2`
+3. **Private App Subnet 1 (AZ1):** CIDR `10.0.3.0/24`, AZ: `ap-southeast-1a`, Name: `shopsflow-private-app-1`
+4. **Private App Subnet 2 (AZ2):** CIDR `10.0.4.0/24`, AZ: `ap-southeast-1b`, Name: `shopsflow-private-app-2`
+5. **Private DB Subnet 1 (AZ1):** CIDR `10.0.5.0/24`, AZ: `ap-southeast-1a`, Name: `shopsflow-private-db-1`
+6. **Private DB Subnet 2 (AZ2):** CIDR `10.0.6.0/24`, AZ: `ap-southeast-1b`, Name: `shopsflow-private-db-2`
 
-![complete](/images/5-Workshop/5.2-Prerequisite/complete.png)
+#### Step 3: Create Internet Gateway (IGW) & NAT Gateway
+1. **Create Internet Gateway:**
+   * Navigate to **VPC** -> **Internet gateways** -> **Create internet gateway**.
+   * Name: `shopsflow-igw`. Click **Create**.
+   * Select Actions -> **Attach to VPC** -> Choose `shopsflow-vpc`.
+2. **Create NAT Gateway:**
+   * Navigate to **VPC** -> **NAT gateways** -> **Create NAT gateway**.
+   * Name: `shopsflow-nat-gw`.
+   * **Subnet:** Select `shopsflow-public-1` (Must reside in a Public subnet).
+   * **Elastic IP allocation ID:** Click **Allocate Elastic IP** to assign a static public IP for the NAT gateway.
+   * Click **Create NAT gateway** and wait for the status to transition to *Available*.
 
-+ **2 VPCs** have been created
+#### Step 4: Configure Route Tables
+1. **Public Route Table (For Public Subnets):**
+   * Navigate to **Route tables** -> **Create route table**. Name: `shopsflow-public-rt`, VPC: `shopsflow-vpc`.
+   * Under the **Routes** tab -> Click **Edit routes** -> Add route: Destination `0.0.0.0/0`, Target: **Internet Gateway** (`shopsflow-igw`).
+   * Under the **Subnet associations** tab -> Click **Edit subnet associations** -> Associate `shopsflow-public-1` and `shopsflow-public-2`.
+2. **Private Route Table (For EC2 Backend Subnets):**
+   * Create route table: Name: `shopsflow-private-rt`.
+   * Under the **Routes** tab -> Add route: Destination `0.0.0.0/0`, Target: **NAT Gateway** (`shopsflow-nat-gw`).
+   * Under **Subnet associations** -> Associate `shopsflow-private-app-1` and `shopsflow-private-app-2`.
+3. **DB Route Table (Fully Isolated):**
+   * Create route table: Name: `shopsflow-db-rt` (No routes pointing to the Internet).
+   * Under **Subnet associations** -> Associate `shopsflow-private-db-1` and `shopsflow-private-db-2`.
 
-![vpcs](/images/5-Workshop/5.2-Prerequisite/vpcs.png)
+---
 
-+ **3 EC2s** have been created
+### 3. Encryption & Credentials Management (KMS & Secrets Manager)
 
-![EC2](/images/5-Workshop/5.2-Prerequisite/ec2.png)
+To secure our backend database credentials and JSON Web Token secrets, we utilize AWS Secrets Manager encrypted with a customer-managed AWS KMS Key.
+
+#### Step 1: Create AWS KMS Customer Managed Key
+1. Navigate to **AWS Console** -> **Key Management Service (KMS)** -> **Customer managed keys** -> Click **Create key**.
+2. Select **Symmetric**, Key usage: **Encrypt and decrypt**.
+3. Alias: `shopsflow-kms-key`. Click **Create**.
+
+#### Step 2: Store Secrets in Secrets Manager
+1. Navigate to **Secrets Manager** -> Click **Store a new secret**.
+2. **Secret type:** Select **Other type of secret**.
+3. Input the database and JWT key/value pairs:
+   * Key: `SPRING_DATASOURCE_PASSWORD` / Value: `ShopsflowPass123!`
+   * Key: `JWT_SECRET` / Value: `ThayTheBangChuoiSecretCucKyDaiVaMat1234567890!`
+4. **Encryption key:** Choose the newly created KMS key `shopsflow-kms-key`.
+5. Secret name: `shopsflow/production/secrets`. Click **Store**.
+
+---
+
+### 4. Firewall Settings (Security Groups)
+
+We will configure 3 Security Groups to establish a secure tiered architecture:
+
+1. **ALB Security Group (`shopsflow-alb-sg`):**
+   * Inbound: Allow `HTTP` (Port 80) and `HTTPS` (Port 443) from anywhere (`0.0.0.0/0`).
+2. **EC2 Security Group (`shopsflow-ec2-sg`):**
+   * Inbound 1: Allow `TCP` (Port 8080) with Source set to the `shopsflow-alb-sg` Security Group (Restricts application backend requests to only those routed through the Load Balancer).
+   * Inbound 2: Allow `SSH` (Port 22) from your workstation's static IP (or rely on AWS Systems Manager Session Manager).
+3. **RDS Security Group (`shopsflow-rds-sg`):**
+   * Inbound: Allow `PostgreSQL` (Port 5432) with Source set to the `shopsflow-ec2-sg` Security Group.
+
+---
+
+### 5. Creating IAM Role for EC2
+
+1. Navigate to **IAM** -> **Roles** -> **Create role** -> Select **EC2** as the trusted entity.
+2. Attach the following managed policies:
+   * `CloudWatchAgentServerPolicy`: Grants the agent permission to publish logs and metrics to CloudWatch.
+   * `AmazonS3FullAccess`: Grants S3 read/write permissions for backup storage.
+3. Attach an Inline Policy allowing the instances to retrieve secrets:
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Action": [
+           "secretsmanager:GetSecretValue",
+           "kms:Decrypt"
+         ],
+         "Resource": "*"
+       }
+     ]
+   }
+   ```
+4. Role name: `ShopsflowEC2Role`. Click **Create role**.
